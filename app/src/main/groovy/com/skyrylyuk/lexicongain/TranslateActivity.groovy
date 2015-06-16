@@ -14,7 +14,6 @@ import com.arasthel.swissknife.annotations.OnUIThread
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import com.squareup.okhttp.Response
-import org.json.JSONArray
 import org.json.JSONObject
 
 /**
@@ -74,15 +73,16 @@ class TranslateActivity extends Activity {
         JSONObject jsonObj = new JSONObject(jsonText);
 
         def code = jsonObj.getInt('code')
-        JSONArray text = jsonObj.getJSONArray('text')
-
-
-        def string = text.join()
-        doOnUIThread(code == 200 ? string : "Server unavailable")
+        if (code == 200) {
+            def jSONArray = jsonObj.getJSONArray('text')
+            showResultOnUIThread(jSONArray?.values?.join(' ') as String)
+        } else {
+            showResultOnUIThread("Server unavailable")
+        }
     }
 
     @OnUIThread()
-    public void doOnUIThread(String translatedText) {
+    public void showResultOnUIThread(String translatedText) {
         txvTranslate.visibility = View.VISIBLE
         txvTranslate.setText(translatedText)
 
