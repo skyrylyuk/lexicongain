@@ -1,6 +1,7 @@
 package com.skyrylyuk.lexicongain
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import com.arasthel.swissknife.annotations.OnUIThread
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
 import com.squareup.okhttp.Response
+import io.realm.Realm
 import org.json.JSONObject
 
 /**
@@ -62,7 +64,6 @@ class TranslateActivity extends Activity {
     @OnBackground()
     public void translateOnBackground(String originalText) {
 
-//        String u = 'https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20150616T094415Z.ab702c0fb8064c33.a4bb58f089d2c9167ce05c0078ffd982a25f982e&lang=en-ru&text=To+be,+or+not+to+be%3F&text=That+is+the+question.'
         String url = "https://translate.yandex.net/api/v1.5/tr.json/translate?key=${API_KEY}&lang=en-ru&text=${originalText}"
         Request request = new Request.Builder()
                 .url(url)
@@ -76,6 +77,9 @@ class TranslateActivity extends Activity {
         if (code == 200) {
             def jSONArray = jsonObj.getJSONArray('text')
             showResultOnUIThread(jSONArray?.values?.join(' ') as String)
+
+            save()
+
         } else {
             showResultOnUIThread("Server unavailable")
         }
@@ -91,7 +95,14 @@ class TranslateActivity extends Activity {
 
     }
 
+    void save(){
+        Context context = this
+        Realm realm = Realm.getInstance(context)
 
+        realm.beginTransaction()
 
+        TokenPair user = realm.createObject(TokenPair.class)
 
+        realm.commitTransaction()
+    }
 }

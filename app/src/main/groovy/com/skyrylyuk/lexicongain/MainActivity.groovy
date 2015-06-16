@@ -1,17 +1,14 @@
 package com.skyrylyuk.lexicongain
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.Menu;
+import android.content.Intent
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
-import android.widget.*
 import com.arasthel.swissknife.SwissKnife
-import com.arasthel.swissknife.annotations.*
-import com.arasthel.swissknife.annotations.resources.StringRes
-import com.arasthel.swissknife.dsl.components.GAsyncTask
-import groovy.transform.CompileStatic;
+import com.arasthel.swissknife.annotations.InjectView
+import io.realm.Realm
 
 //@CompileStatic
 class MainActivity extends AppCompatActivity {
@@ -35,6 +32,10 @@ class MainActivity extends AppCompatActivity {
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             textView.text = sharedText
         }
+
+        Realm realm = Realm.getInstance(this)
+        realm.where(TokenPair.class)
+
     }
 
     @Override
