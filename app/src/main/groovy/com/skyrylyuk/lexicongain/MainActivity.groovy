@@ -26,7 +26,6 @@ class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        textView.setText(action + ' ' + type)
 
         if(action == Intent.ACTION_SEND){
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -34,8 +33,9 @@ class MainActivity extends AppCompatActivity {
         }
 
         Realm realm = Realm.getInstance(this)
-        realm.where(TokenPair.class)
+        int size = realm.where(TokenPair.class).findAll().size()
 
+        textView.setText(action + ' ' + type + " " + size)
     }
 
     @Override

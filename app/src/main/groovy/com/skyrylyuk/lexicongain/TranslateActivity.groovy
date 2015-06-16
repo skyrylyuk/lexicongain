@@ -101,7 +101,7 @@ class TranslateActivity extends Activity {
 
         realm.beginTransaction()
 
-        TokenPair user = realm.createObject(TokenPair.class)
+//        TokenPair user = realm.createObject(TokenPair.class)
 
         realm.commitTransaction()
     }
