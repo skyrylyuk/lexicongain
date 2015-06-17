@@ -3,18 +3,27 @@ package com.skyrylyuk.lexicongain
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ListView
 import android.widget.TextView
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import io.realm.Realm
+import io.realm.RealmResults
 
 //@CompileStatic
 class MainActivity extends AppCompatActivity {
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    private Realm realm
 
     @InjectView(R.id.txvText)
     TextView textView
+
+    @InjectView(R.id.listView)
+    ListView listView
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,10 +41,18 @@ class MainActivity extends AppCompatActivity {
             textView.text = sharedText
         }
 
-        Realm realm = Realm.getInstance(this)
-        int size = realm.where(TokenPair.class).findAll().size()
+        realm = Realm.getInstance(this);
 
-        textView.setText(action + ' ' + type + " " + size)
+        RealmResults<TokenPair> tokenPairs = realm.where(TokenPair.class).findAll()
+        int size = tokenPairs.size()
+
+
+        String string = action + ' ' + type + " " + size
+        textView.setText(string)
+        Log.i(TAG, "string = " + string);
+
+        def adapter = new TokenPairAdapter(this, android.R.layout.simple_list_item_1, tokenPairs, false)
+        listView.setAdapter(adapter)
     }
 
     @Override

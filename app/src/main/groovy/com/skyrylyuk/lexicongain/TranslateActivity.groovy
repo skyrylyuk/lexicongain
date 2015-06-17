@@ -76,9 +76,11 @@ class TranslateActivity extends Activity {
         def code = jsonObj.getInt('code')
         if (code == 200) {
             def jSONArray = jsonObj.getJSONArray('text')
-            showResultOnUIThread(jSONArray?.values?.join(' ') as String)
 
-            save()
+            def responseText = jSONArray?.values?.join(' ') as String
+            showResultOnUIThread(responseText)
+
+            save(originalText, responseText)
 
         } else {
             showResultOnUIThread("Server unavailable")
@@ -95,13 +97,17 @@ class TranslateActivity extends Activity {
 
     }
 
-    void save(){
+    void save(String original, String translate){
         Context context = this
         Realm realm = Realm.getInstance(context)
 
         realm.beginTransaction()
 
-//        TokenPair user = realm.createObject(TokenPair.class)
+        TokenPair tokenPair = realm.createObject(TokenPair.class)
+        tokenPair.originalText = original
+        tokenPair.translateText = translate
+
+        tokenPair.translateDate = new Date()
 
         realm.commitTransaction()
     }

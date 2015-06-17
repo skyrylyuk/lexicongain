@@ -10,8 +10,16 @@
 
     <TextView
         android:id="@+id/txvText"
-        android:text="@string/hello_world"
+        android:text="@string/action_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/txvText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

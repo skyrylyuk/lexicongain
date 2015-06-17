@@ -1,5 +1,7 @@
 package com.skyrylyuk.lexicongain;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -14,8 +16,9 @@ public class TokenPair extends RealmObject {
 
     @PrimaryKey
     private String originalText;
+    private String translateText;
 
-    private String tramslateDate;
+    private Date translateDate;
 
     public String getOriginalText() {
 
@@ -26,11 +29,19 @@ public class TokenPair extends RealmObject {
         this.originalText = originalText;
     }
 
-    public String getTramslateDate() {
-        return tramslateDate;
+    public String getTranslateText() {
+        return translateText;
     }
 
-    public void setTramslateDate(String tramslateDate) {
-        this.tramslateDate = tramslateDate;
+    public void setTranslateText(String translateText) {
+        this.translateText = translateText;
+    }
+
+    public Date getTranslateDate() {
+        return translateDate;
+    }
+
+    public void setTranslateDate(Date translateDate) {
+        this.translateDate = translateDate;
     }
 }
