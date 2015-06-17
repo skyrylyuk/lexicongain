@@ -3,7 +3,6 @@ package com.skyrylyuk.lexicongain
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ListView
@@ -44,12 +43,7 @@ class MainActivity extends AppCompatActivity {
         realm = Realm.getInstance(this);
 
         RealmResults<TokenPair> tokenPairs = realm.where(TokenPair.class).findAll()
-        int size = tokenPairs.size()
-
-
-        String string = action + ' ' + type + " " + size
-        textView.setText(string)
-        Log.i(TAG, "string = " + string);
+        tokenPairs.sort("translateDate", RealmResults.SORT_ORDER_DESCENDING)
 
         def adapter = new TokenPairAdapter(this, android.R.layout.simple_list_item_1, tokenPairs, false)
         listView.setAdapter(adapter)
