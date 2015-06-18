@@ -5,12 +5,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ListView
+import android.view.View
 import android.widget.TextView
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import io.realm.Realm
-import io.realm.RealmResults
 
 //@CompileStatic
 class MainActivity extends AppCompatActivity {
@@ -18,11 +17,11 @@ class MainActivity extends AppCompatActivity {
 
     private Realm realm
 
-    @InjectView(R.id.txvText)
-    TextView textView
+    @InjectView(R.id.txvOriginalText)
+    TextView txvOriginalText
 
-    @InjectView(R.id.listView)
-    ListView listView
+    @InjectView(R.id.txvTranslateText)
+    TextView txvTranslateText
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,22 +30,54 @@ class MainActivity extends AppCompatActivity {
 
         SwissKnife.inject this
 
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
-
-        if(action == Intent.ACTION_SEND){
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            textView.text = sharedText
-        }
-
         realm = Realm.getInstance(this);
 
-        RealmResults<TokenPair> tokenPairs = realm.where(TokenPair.class).findAll()
-        tokenPairs.sort("translateDate", RealmResults.SORT_ORDER_DESCENDING)
+        txvOriginalText.setOnClickListener {
+            txvTranslateText.visibility = txvTranslateText.visibility == View.VISIBLE ? View.GONE : View.VISIBLE
+        }
 
-        def adapter = new TokenPairAdapter(this, android.R.layout.simple_list_item_1, tokenPairs, false)
-        listView.setAdapter(adapter)
+/*
+        txvTranslateText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            boolean onTouch(View v, MotionEvent event) {
+                return false
+            }
+        })
+*/
+        txvTranslateText.setOnClickListener {
+            txvOriginalText.text = ""
+            txvTranslateText.visibility = View.GONE
+
+            txvTranslateText.postDelayed({markLastItemSuccess()}, 750 )
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart()
+
+        showLastItem()
+    }
+
+    def markLastItemSuccess(){
+        realm.beginTransaction();
+
+        def query = realm.where(TokenPair.class)
+        TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
+
+        tokenPair.translateDate = new Date()
+
+        realm.commitTransaction()
+
+        showLastItem()
+    }
+
+    def showLastItem = {
+        def query = realm.where(TokenPair.class)
+        TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
+
+        txvOriginalText.text = tokenPair?.originalText
+        txvTranslateText.text = tokenPair?.translateText
     }
 
     @Override
@@ -65,6 +96,7 @@ class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class))
             return true;
         }
 

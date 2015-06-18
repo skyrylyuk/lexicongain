@@ -3,4 +3,9 @@
 
     <string name="add_card">Add card</string>
     <string name="action_settings">Settings</string>
+
+    <string name="original_text">Original text</string>
+    <string name="translate_text">Translate text</string>
+    <string name="right">Right</string>
+    <string name="wrong">Wrong</string>
 </resources>

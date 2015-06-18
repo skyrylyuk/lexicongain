@@ -21,10 +21,11 @@ public class TokenPairAdapter extends RealmBaseAdapter<TokenPair> implements Lis
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.tokenPair = (TextView) convertView.findViewById(android.R.id.text1);
+            viewHolder.original = (TextView) convertView.findViewById(android.R.id.text1);
+            viewHolder.translate = (TextView) convertView.findViewById(android.R.id.text2);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -32,11 +33,13 @@ public class TokenPairAdapter extends RealmBaseAdapter<TokenPair> implements Lis
 
 
         TokenPair item = getItem(position);
-        viewHolder.tokenPair.text = "${item.originalText}  ${item.translateText}";
+        viewHolder.original.text = "${item.originalText}"
+        viewHolder.translate.text = "${item.translateText}"
         return convertView;
     }
 
     private static class ViewHolder {
-        TextView tokenPair;
+        TextView original;
+        TextView translate;
     }
 }
