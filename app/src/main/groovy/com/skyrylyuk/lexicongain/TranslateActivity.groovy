@@ -50,6 +50,8 @@ class TranslateActivity extends Activity {
 
         setContentView R.layout.activity_translate
 
+        getRootView().setBackgroundColor(android.R.color.transparent)
+
         SwissKnife.inject this
 
         Intent intent = getIntent();
@@ -102,7 +104,7 @@ class TranslateActivity extends Activity {
 
         prbTranslate.setIndeterminate false
 
-        getRootView().postDelayed({ finish() }, sharedText.length() * 100 + 250 )
+        getRootView().postDelayed({ finish() }, sharedText.length() * 150 + 500 )
     }
 
     void save(String original, String translate){
