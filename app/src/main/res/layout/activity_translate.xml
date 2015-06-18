@@ -8,7 +8,9 @@
     <TextView
         android:id="@+id/txvOriginal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center" />
 
     <ProgressBar
         android:id="@+id/prbTranslate"
@@ -23,6 +25,8 @@
         android:id="@+id/txvTranslate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="center"
         android:visibility="gone"/>
 
 
