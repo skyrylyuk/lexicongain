@@ -35,6 +35,7 @@ class TranslateActivity extends Activity {
 
     @InjectView(R.id.txvTranslate)
     TextView txvTranslate
+    private String sharedText
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +53,19 @@ class TranslateActivity extends Activity {
         SwissKnife.inject this
 
         Intent intent = getIntent();
-        String action = intent.getAction();
+        String action = intent.getAction()
         if (action == Intent.ACTION_SEND) {
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            txvOriginal.text = sharedText
+            sharedText = intent.getStringExtra(Intent.EXTRA_TEXT).trim()
+            txvOriginal.text = this.sharedText
 
-            translateOnBackground sharedText
+            Realm realm = Realm.getInstance(this)
+
+            TokenPair first = realm.where(TokenPair.class).equalTo("originalText", sharedText).findFirst();
+            if(first){
+                showResultOnUIThread(first.translateText)
+            } else {
+                translateOnBackground this.sharedText
+            }
         }
     }
 
@@ -92,9 +100,9 @@ class TranslateActivity extends Activity {
         txvTranslate.visibility = View.VISIBLE
         txvTranslate.setText(translatedText)
 
-
         prbTranslate.setIndeterminate false
 
+        getRootView().postDelayed({ finish() }, sharedText.length() * 100 + 250 )
     }
 
     void save(String original, String translate){
