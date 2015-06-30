@@ -1,10 +1,7 @@
 package com.skyrylyuk.lexicongain
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.arasthel.swissknife.SwissKnife
@@ -48,7 +45,7 @@ class MainActivity extends AppCompatActivity {
             txvOriginalText.text = ""
             txvTranslateText.visibility = View.GONE
 
-            txvTranslateText.postDelayed({markLastItemSuccess()}, 750 )
+            txvTranslateText.postDelayed({ markLastItemSuccess() }, 750)
         }
     }
 
@@ -59,13 +56,15 @@ class MainActivity extends AppCompatActivity {
         showLastItem()
     }
 
-    def markLastItemSuccess(){
+    def markLastItemSuccess() {
         realm.beginTransaction();
 
         def query = realm.where(TokenPair.class)
-        TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
+        if (query.count()) {
+            TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
 
-        tokenPair.translateDate = new Date()
+            tokenPair.translateDate = new Date()
+        }
 
         realm.commitTransaction()
 
@@ -74,7 +73,7 @@ class MainActivity extends AppCompatActivity {
 
     def showLastItem = {
         def query = realm.where(TokenPair.class)
-        if(query.count()) {
+        if (query.count()) {
             TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
 
             txvOriginalText.text = tokenPair?.originalText
@@ -82,6 +81,7 @@ class MainActivity extends AppCompatActivity {
         }
     }
 
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -104,4 +104,5 @@ class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+*/
 }
