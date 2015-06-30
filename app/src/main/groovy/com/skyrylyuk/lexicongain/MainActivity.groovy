@@ -74,10 +74,12 @@ class MainActivity extends AppCompatActivity {
 
     def showLastItem = {
         def query = realm.where(TokenPair.class)
-        TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
+        if(query.count()) {
+            TokenPair tokenPair = query.findAllSorted("translateDate")?.first()
 
-        txvOriginalText.text = tokenPair?.originalText
-        txvTranslateText.text = tokenPair?.translateText
+            txvOriginalText.text = tokenPair?.originalText
+            txvTranslateText.text = tokenPair?.translateText
+        }
     }
 
     @Override
