@@ -1,39 +1,41 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:animateLayoutChanges="true"
-              android:orientation="vertical"
-              tools:context=".MainActivity"
-    android:weightSum="2">
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    android:weightSum="2"
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/txvOriginalText"
-        android:text="@string/original_text"
-        android:background="#90A4AE"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="#90A4AE"
+        android:gravity="center"
+        android:text="@string/original_text"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
     <TextView
         android:id="@+id/txvTranslateText"
-        android:text="@string/translate_text"
-        android:background="#80D8FF"
-        android:gravity="center"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="#80D8FF"
+        android:gravity="center"
+        android:text="@string/translate_text"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="gone"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/button"
+        android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@mipmap/ic_action_add"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:src="@android:drawable/ic_input_add"/>
 
 </android.support.design.widget.CoordinatorLayout>

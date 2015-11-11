@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.skyrylyuk.lexicongain">
+<manifest
+    package="com.skyrylyuk.lexicongain"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+        android:name=".LexiconGainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,19 +20,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TranslateActivity"
+            android:name="TranslateActivity"
             android:label="@string/add_card"
-            android:theme="@android:style/Theme.Holo.Light.Dialog.MinWidth">
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/action_settings">
-        </activity>
+        <!--
+                <activity
+                    android:name=".SettingsActivity"
+                    android:label="@string/action_settings">
+                </activity>
+        -->
     </application>
 
 </manifest>
