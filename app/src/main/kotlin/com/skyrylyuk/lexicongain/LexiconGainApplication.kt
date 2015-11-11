@@ -3,7 +3,6 @@ package com.skyrylyuk.lexicongain
 import android.app.Application
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import io.realm.annotations.RealmModule
 
 
 /**
@@ -22,9 +21,5 @@ class LexiconGainApplication : Application() {
 
         Realm.setDefaultConfiguration(realmConfig)
     }
-
 }
-
-@RealmModule(allClasses = true)
-public open class DBModule
 
