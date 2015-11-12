@@ -13,6 +13,7 @@ import retrofit.RestAdapter
 import rx.android.schedulers.AndroidSchedulers
 import rx.functions.Func1
 import rx.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 /**
  *
@@ -49,11 +50,28 @@ class TranslateActivity : Activity() {
             val service = restAdapter.create(YandexTranslate::class.java)
 
             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, originalText)
+                    .observeOn(Schedulers.computation())
                     .map(object : Func1<JsonObject, String> {
-                        override fun call(response: JsonObject): String = response.get(YandexTranslate.TEXT).asString
+                        override fun call(response: JsonObject): String {
+                            return response.get(YandexTranslate.TEXT).asString
+                        }
                     })
+                    .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
-                        println("$originalText => $it")
+
+
+                        txvTranslate.text = it
+                        txvTranslate.visibility = View.VISIBLE
+                        prbTranslate.visibility = View.INVISIBLE
+                    }
+                    .delay(3, TimeUnit.SECONDS)
+                    .doOnNext {
+                        alertDialog.dismiss()
+                    }
+                    .observeOn(Schedulers.computation())
+                    .subscribe {
+                        // TODO extract save to separate function
+
                         // Open the default realm
                         var realm = Realm.getInstance(this)
 
@@ -66,13 +84,6 @@ class TranslateActivity : Activity() {
 
                         // When the transaction is committed, all changes a synced to disk.
                         realm.commitTransaction()
-                    }
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        txvTranslate.text = it
-                        txvTranslate.visibility = View.VISIBLE
-                        prbTranslate.visibility = View.INVISIBLE
                     }
         }
     }
