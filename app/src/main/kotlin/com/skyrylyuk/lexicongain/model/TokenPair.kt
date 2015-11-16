@@ -18,7 +18,9 @@ public open class TokenPair(
 
         public open var translateText: String = "",
 
-        public open var crationDate: Date = Date()
+        public open var creationDate: Date = Date(),
+
+        public open var updateDate: Date = Date()
 
 ) : RealmObject () {
 

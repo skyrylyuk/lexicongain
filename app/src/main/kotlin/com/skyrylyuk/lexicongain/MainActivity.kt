@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.activity_main.addButton
 import kotlinx.android.synthetic.activity_main.content
 import kotlinx.android.synthetic.activity_main.txvOriginalText
 import kotlinx.android.synthetic.activity_main.txvTranslateText
+import java.util.*
 import kotlin.properties.Delegates
 
 /**
@@ -35,15 +36,13 @@ class MainActivity : AppCompatActivity() {
         // Open the default realm for the UI thread.
         realm = Realm.getDefaultInstance()
 
-        val count = realm.where(TokenPair::class.java).count()
-
-        txvOriginalText.text = "${txvOriginalText.text} $count"
+        showNextCard()
 
         addButton.setOnClickListener {
 
-            val findFirst = realm.where(TokenPair::class.java)?.findFirst()
+            val count = realm.where(TokenPair::class.java).count()
 
-            Snackbar.make(content, "Add ${findFirst?.originalText}", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(content, "Add $count", Snackbar.LENGTH_SHORT).show()
         }
 
         txvOriginalText.setOnClickListener {
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
+        val color = resources.getColor(R.color.slave_color)
         var startX: Float = 0f
         val hsv = FloatArray(3)
         var shift: Int
@@ -67,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                     startX = motionEvent.x
                 }
                 ACTION_MOVE -> {
-                    Color.colorToHSV(resources.getColor(R.color.slave_color), hsv)
+                    Color.colorToHSV(color, hsv)
 
                     shift = ((startX - motionEvent.x) / SENSITIVE).toInt()
 
@@ -76,7 +75,18 @@ class MainActivity : AppCompatActivity() {
                     view.setBackgroundColor(Color.HSVToColor(hsv))
                 }
                 ACTION_UP, ACTION_OUTSIDE -> {
-                    view.setBackgroundResource(R.color.slave_color)
+
+                    val allObjects = realm.allObjects(TokenPair::class.java)
+                    allObjects.sort("updateDate")
+
+                    if (allObjects.size != 0) {
+
+                        realm.executeTransaction {
+                            val findFirst: TokenPair = allObjects.first()
+                            findFirst.updateDate = Date()
+                        }
+                    }
+
                     when {
                         shift > THRESHOLD -> {
                             println("correct")
@@ -88,6 +98,9 @@ class MainActivity : AppCompatActivity() {
                             println("default")
                         }
                     }
+
+                    showNextCard()
+
                 }
             }
 
@@ -100,5 +113,22 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         realm.close()
+    }
+
+    fun showNextCard() {
+        txvTranslateText.setBackgroundResource(R.color.slave_color)
+
+        val allObjects = realm.allObjects(TokenPair::class.java)
+        allObjects.sort("updateDate")
+
+        if (allObjects.size != 0) {
+            val findFirst = allObjects.first()
+            txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
+            txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
+            println("findFirst = $findFirst")
+        }
+
+
+
     }
 }

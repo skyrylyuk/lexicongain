@@ -71,6 +71,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.0.1'
 
     // Retrofit
+    //TODO update retrofit
 //    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'org.immutables:gson:2.1.0'

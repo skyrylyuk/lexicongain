@@ -65,7 +65,7 @@ class TranslateActivity : Activity() {
                         prbTranslate.visibility = View.INVISIBLE
                     }
                     .observeOn(Schedulers.immediate())
-                    .delay(7, TimeUnit.SECONDS)
+                    .delay(4, TimeUnit.SECONDS)
                     .doOnNext {
                         alertDialog.dismiss()
                     }
@@ -74,14 +74,18 @@ class TranslateActivity : Activity() {
                         // TODO extract save to separate function
 
                         // Open the default realm
-                        var realm = Realm.getInstance(this)
+                        var realm = Realm.getDefaultInstance()
 
                         // All writes must be wrapped in a transaction to facilitate safe multi threading
                         realm.beginTransaction()
 
-                        val tokenPair = realm.createObject(TokenPair::class.java)
+                        //                        val tokenPair = realm.createObject(TokenPair::class.java)
+                        val tokenPair = TokenPair()
+
                         tokenPair.originalText = originalText
                         tokenPair.translateText = it
+
+                        realm.copyToRealmOrUpdate(tokenPair)
 
                         // When the transaction is committed, all changes a synced to disk.
                         realm.commitTransaction()
