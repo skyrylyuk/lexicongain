@@ -27,9 +27,9 @@ android {
         events 2000
     }
 
-    dexOptions {
-        incremental false
-    }
+//    dexOptions {
+//        incremental false
+//    }
 /*
     splits {
         abi {

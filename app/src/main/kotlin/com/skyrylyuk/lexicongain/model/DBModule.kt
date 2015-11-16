@@ -1,12 +1,13 @@
-package com.skyrylyuk.lexicongain
+package com.skyrylyuk.lexicongain.model
 
 import io.realm.annotations.RealmModule
 
 /**
+ *
  * Created by skyrylyuk on 11/11/15.
  */
 
-@RealmModule(allClasses = true)
+@RealmModule(classes = arrayOf(TokenPair::class))
 public open class DBModule {
 
 }

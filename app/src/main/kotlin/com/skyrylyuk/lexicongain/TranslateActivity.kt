@@ -22,7 +22,9 @@ import java.util.concurrent.TimeUnit
 
 class TranslateActivity : Activity() {
 
-    val TAG = "TranslateActivity::class.simpleName"
+    companion object {
+        val TAG = TranslateActivity::class.java.simpleName
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,17 +60,16 @@ class TranslateActivity : Activity() {
                     })
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
-
-
                         txvTranslate.text = it
                         txvTranslate.visibility = View.VISIBLE
                         prbTranslate.visibility = View.INVISIBLE
                     }
-                    .delay(3, TimeUnit.SECONDS)
+                    .observeOn(Schedulers.immediate())
+                    .delay(7, TimeUnit.SECONDS)
                     .doOnNext {
                         alertDialog.dismiss()
                     }
-                    .observeOn(Schedulers.computation())
+                    .subscribeOn(Schedulers.trampoline())
                     .subscribe {
                         // TODO extract save to separate function
 
