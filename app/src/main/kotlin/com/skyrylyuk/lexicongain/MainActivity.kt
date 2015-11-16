@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.activity_main.content
 import kotlinx.android.synthetic.activity_main.txvOriginalText
 import kotlinx.android.synthetic.activity_main.txvTranslateText
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 /**
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     val SENSITIVE: Int = 10
     val THRESHOLD = 25
+
+    private val TIME_SHIFT_PERIOD = TimeUnit.MILLISECONDS.convert(3, TimeUnit.DAYS)
 
     var realm: Realm by Delegates.notNull()
 
@@ -36,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         // Open the default realm for the UI thread.
         realm = Realm.getDefaultInstance()
 
-        showNextCard()
+        showOldestCard()
 
         addButton.setOnClickListener {
 
@@ -69,41 +72,26 @@ class MainActivity : AppCompatActivity() {
                     Color.colorToHSV(color, hsv)
 
                     shift = ((startX - motionEvent.x) / SENSITIVE).toInt()
-
                     hsv[0] += shift
 
                     view.setBackgroundColor(Color.HSVToColor(hsv))
                 }
                 ACTION_UP, ACTION_OUTSIDE -> {
-
-                    val allObjects = realm.allObjects(TokenPair::class.java)
-                    allObjects.sort("updateDate")
-
-                    if (allObjects.size != 0) {
-
-                        realm.executeTransaction {
-                            val findFirst: TokenPair = allObjects.first()
-                            findFirst.updateDate = Date()
-                        }
-                    }
-
                     when {
                         shift > THRESHOLD -> {
-                            println("correct")
+                            markOldestCard(1)
                         }
                         shift < -THRESHOLD -> {
-                            println("wrong")
+                            markOldestCard(3)
                         }
                         else -> {
                             println("default")
                         }
                     }
 
-                    showNextCard()
-
+                    showOldestCard()
                 }
             }
-
 
             true
         }
@@ -115,7 +103,20 @@ class MainActivity : AppCompatActivity() {
         realm.close()
     }
 
-    fun showNextCard() {
+    fun markOldestCard(date: Int) {
+        val allObjects = realm.allObjects(TokenPair::class.java)
+        allObjects.sort("updateDate")
+
+        if (allObjects.size > 0) {
+            val tokenPair = allObjects.first()
+            realm.executeTransaction {
+                if (date != 0)
+                    tokenPair.updateDate = Date(tokenPair.updateDate.time + TIME_SHIFT_PERIOD)
+            }
+        }
+    }
+
+    fun showOldestCard() {
         txvTranslateText.setBackgroundResource(R.color.slave_color)
 
         val allObjects = realm.allObjects(TokenPair::class.java)
@@ -125,10 +126,7 @@ class MainActivity : AppCompatActivity() {
             val findFirst = allObjects.first()
             txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
             txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
-            println("findFirst = $findFirst")
+            txvTranslateText.visibility = View.GONE
         }
-
-
-
     }
 }
