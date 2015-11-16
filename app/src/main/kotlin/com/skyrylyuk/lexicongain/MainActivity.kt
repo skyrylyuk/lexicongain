@@ -71,6 +71,8 @@ class MainActivity : AppCompatActivity() {
 
                     shift = ((startX - motionEvent.x) / SENSITIVE).toInt()
 
+                    hsv[0] += shift
+
                     view.setBackgroundColor(Color.HSVToColor(hsv))
                 }
                 ACTION_UP, ACTION_OUTSIDE -> {
