@@ -2,17 +2,18 @@ package com.skyrylyuk.lexicongain
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
 import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
 import kotlinx.android.synthetic.activity_main.addButton
-import kotlinx.android.synthetic.activity_main.content
 import kotlinx.android.synthetic.activity_main.txvOriginalText
 import kotlinx.android.synthetic.activity_main.txvTranslateText
+import org.jetbrains.anko.startActivity
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
@@ -42,18 +43,11 @@ class MainActivity : AppCompatActivity() {
         showOldestCard()
 
         addButton.setOnClickListener {
-
-            val count = realm.where(TokenPair::class.java).count()
-
-            Snackbar.make(content, "Add $count", Snackbar.LENGTH_SHORT).show()
+            startActivity<LibraryActivity>()
         }
 
         txvOriginalText.setOnClickListener {
-            if (txvTranslateText.visibility == View.VISIBLE) {
-                txvTranslateText.visibility = View.GONE
-            } else {
-                txvTranslateText.visibility = View.VISIBLE
-            }
+            txvTranslateText.visibility = View.VISIBLE
         }
 
         val color = resources.getColor(R.color.slave_color)
@@ -95,6 +89,21 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        if (item.itemId == R.id.action_library) {
+            startActivity<LibraryActivity>()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {

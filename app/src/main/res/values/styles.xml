@@ -3,6 +3,26 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
+        <!--<item name="android:windowNoTitle">true</item>-->
+
+        <!-- colorPrimary is used for coloring the Toolbar -->
+        <item name="colorPrimary">#3F51B5</item>
+
+        <!-- colorPrimaryDark is used for coloring the status bar -->
+        <item name="colorPrimaryDark">#303F9F</item>
+
+        <!-- colorAccent is used as the default value for colorControlActivated
+             which is used to tint widgets -->
+        <item name="colorAccent">#FFAB40</item>
+    </style>
+
+    <style name="Theme.Transparent" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
 </resources>

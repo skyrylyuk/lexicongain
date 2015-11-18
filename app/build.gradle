@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'android-command'
 apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
@@ -13,7 +12,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.1"
-//        multiDexEnabled true
     }
 
     buildTypes {
@@ -23,9 +21,6 @@ android {
         }
     }
 
-    command {
-        events 2000
-    }
 
 //    dexOptions {
 //        incremental false
@@ -56,12 +51,15 @@ repositories {
 
 dependencies {
     // Android support
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
     // Network support
     compile 'com.squareup.okhttp:okhttp:2.4.0'
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.jetbrains.anko:anko-sdk15:0.7.2'
+    compile 'org.jetbrains.anko:anko-appcompat-v7:0.7.2'
 
     // Realm
     compile "io.realm:realm-android:${realm_version}"

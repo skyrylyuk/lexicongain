@@ -3,6 +3,8 @@ package com.skyrylyuk.lexicongain
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -29,13 +31,14 @@ class TranslateActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        window.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         if (intent.action == Intent.ACTION_SEND) {
-            val originalText = intent.getStringExtra(Intent.EXTRA_TEXT).trim()
+            val original = intent.getStringExtra(Intent.EXTRA_TEXT).trim()
 
             val alertDialog = AlertDialog.Builder(this, R.style.Base_V21_Theme_AppCompat_Light).create();
             val inflate = View.inflate(applicationContext, R.layout.activity_translate, null)
-            (inflate.findViewById(R.id.txvOriginal) as TextView).text = originalText
+            (inflate.findViewById(R.id.txvOriginal) as TextView).text = original
             val prbTranslate = inflate.findViewById(R.id.prbTranslate)
             val txvTranslate = (inflate.findViewById(R.id.txvTranslate) as TextView)
             alertDialog.setView(inflate)
@@ -43,6 +46,7 @@ class TranslateActivity : Activity() {
                 finish()
             }
 
+            alertDialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
             alertDialog.show()
 
             var restAdapter = RestAdapter.Builder()
@@ -51,7 +55,7 @@ class TranslateActivity : Activity() {
 
             val service = restAdapter.create(YandexTranslate::class.java)
 
-            service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, originalText)
+            service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                     .observeOn(Schedulers.computation())
                     .map(object : Func1<JsonObject, String> {
                         override fun call(response: JsonObject): String {
@@ -70,7 +74,7 @@ class TranslateActivity : Activity() {
                         alertDialog.dismiss()
                     }
                     .subscribeOn(Schedulers.trampoline())
-                    .subscribe {
+                    .subscribe { translation ->
                         // TODO extract save to separate function
 
                         // Open the default realm
@@ -79,11 +83,10 @@ class TranslateActivity : Activity() {
                         // All writes must be wrapped in a transaction to facilitate safe multi threading
                         realm.beginTransaction()
 
-                        //                        val tokenPair = realm.createObject(TokenPair::class.java)
-                        val tokenPair = TokenPair()
-
-                        tokenPair.originalText = originalText
-                        tokenPair.translateText = it
+                        val tokenPair = TokenPair().apply {
+                            originalText = original
+                            translateText = translation
+                        }
 
                         realm.copyToRealmOrUpdate(tokenPair)
 
