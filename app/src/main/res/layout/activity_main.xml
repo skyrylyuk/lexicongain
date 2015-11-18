@@ -9,12 +9,6 @@
         android:weightSum="2"
         tools:context=".MainActivity">
 
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp">
-    </android.support.v7.widget.Toolbar>
-
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -31,15 +25,14 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"/>
 
                 <TextView
-                    android:id="@+id/txvTranslateText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/slave_color"
-                    android:gravity="center"
-                    android:text="@string/translate_text"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:visibility="gone"/>
+                        android:id="@+id/txvTranslateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0"
+                        android:background="@color/slave_color"
+                        android:gravity="center"
+                        android:text="@string/translate_text"
+                        android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         </LinearLayout>
 
