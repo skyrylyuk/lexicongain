@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
 import android.view.animation.Animation
+import android.view.animation.AnticipateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Transformation
 import android.widget.LinearLayout
@@ -27,7 +28,7 @@ import kotlin.properties.Delegates
 class MainActivity : AppCompatActivity() {
 
     val SENSITIVE: Int = 10
-    val THRESHOLD = 25
+    val THRESHOLD = 15
 
     private val TIME_SHIFT_PERIOD = TimeUnit.MILLISECONDS.convert(3, TimeUnit.DAYS)
 
@@ -44,12 +45,9 @@ class MainActivity : AppCompatActivity() {
 
         showOldestCard()
 
-        /*
-                addButton.setOnClickListener {
-                    println("addButton.setOnClickListener")
-                }
-        */
-
+        addButton.setOnClickListener {
+            println("addButton.setOnClickListener")
+        }
 
         txvOriginalText.setOnClickListener {
 
@@ -80,6 +78,7 @@ class MainActivity : AppCompatActivity() {
 
                     view.setBackgroundColor(Color.HSVToColor(hsv))
                 }
+
                 ACTION_UP, ACTION_OUTSIDE -> {
                     when {
                         shift > THRESHOLD -> {
@@ -89,11 +88,27 @@ class MainActivity : AppCompatActivity() {
                             markOldestCard(3)
                         }
                         else -> {
+                            //todo  add default action or implement null operation
                             println("default")
                         }
                     }
 
-                    showOldestCard()
+                    val animation = CollapseAnimation(txvTranslateText)
+                    animation.duration = resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
+                    animation.interpolator = AnticipateInterpolator()
+                    animation.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationRepeat(animation: Animation?) {
+                            throw UnsupportedOperationException()
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            showOldestCard()
+                        }
+
+                        override fun onAnimationStart(animation: Animation?) {
+                        }
+                    })
+                    txvTranslateText.startAnimation(animation)
                 }
             }
 
@@ -177,7 +192,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
-            lp?.weight = interpolatedTime
+            lp?.weight = 1 - interpolatedTime
             view.layoutParams = lp;
         }
     }
