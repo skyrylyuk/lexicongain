@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_weight="1"
-            android:src="@drawable/ic_library"
+            android:src="@drawable/ic_add_white"
             android:padding="15dp"/>
 
 </android.support.design.widget.CoordinatorLayout>
