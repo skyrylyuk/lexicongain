@@ -8,11 +8,13 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.Transformation
+import android.widget.LinearLayout
 import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
-import kotlinx.android.synthetic.activity_main.addButton
-import kotlinx.android.synthetic.activity_main.txvOriginalText
-import kotlinx.android.synthetic.activity_main.txvTranslateText
+import kotlinx.android.synthetic.activity_main.*
 import org.jetbrains.anko.startActivity
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -42,12 +44,20 @@ class MainActivity : AppCompatActivity() {
 
         showOldestCard()
 
-        addButton.setOnClickListener {
-            startActivity<LibraryActivity>()
-        }
+        /*
+                addButton.setOnClickListener {
+                    println("addButton.setOnClickListener")
+                }
+        */
+
 
         txvOriginalText.setOnClickListener {
+
             txvTranslateText.visibility = View.VISIBLE
+            val animation = ExpandAnimation(txvTranslateText)
+            animation.duration = resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
+            animation.interpolator = DecelerateInterpolator()
+            txvTranslateText.startAnimation(animation)
         }
 
         val color = resources.getColor(R.color.slave_color)
@@ -126,6 +136,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun showOldestCard() {
+        txvTranslateText.visibility = View.GONE
         txvTranslateText.setBackgroundResource(R.color.slave_color)
 
         val allObjects = realm.allObjects(TokenPair::class.java)
@@ -135,7 +146,39 @@ class MainActivity : AppCompatActivity() {
             val findFirst = allObjects.first()
             txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
             txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
-            txvTranslateText.visibility = View.GONE
+        }
+    }
+
+    class ExpandAnimation(internal val view: View) : Animation() {
+
+        var lp: LinearLayout.LayoutParams? = null
+
+        override fun initialize(width: Int, height: Int, parentWidth: Int, parentHeight: Int) {
+            super.initialize(width, height, parentWidth, parentHeight)
+
+            lp = view.layoutParams as LinearLayout.LayoutParams
+        }
+
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+            lp?.weight = interpolatedTime
+            view.layoutParams = lp;
+        }
+
+    }
+
+    class CollapseAnimation(internal val view: View) : Animation() {
+
+        var lp: LinearLayout.LayoutParams? = null
+
+        override fun initialize(width: Int, height: Int, parentWidth: Int, parentHeight: Int) {
+            super.initialize(width, height, parentWidth, parentHeight)
+
+            lp = view.layoutParams as LinearLayout.LayoutParams
+        }
+
+        override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+            lp?.weight = interpolatedTime
+            view.layoutParams = lp;
         }
     }
 }

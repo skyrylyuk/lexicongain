@@ -3,7 +3,6 @@ package com.skyrylyuk.lexicongain
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
@@ -31,12 +30,13 @@ class TranslateActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT));
+        val colorDrawable = ColorDrawable(android.graphics.Color.TRANSPARENT)
+        window.setBackgroundDrawable(colorDrawable)
 
         if (intent.action == Intent.ACTION_SEND) {
             val original = intent.getStringExtra(Intent.EXTRA_TEXT).trim()
 
-            val alertDialog = AlertDialog.Builder(this, R.style.Base_V21_Theme_AppCompat_Light).create();
+            val alertDialog = AlertDialog.Builder(this).create();
             val inflate = View.inflate(applicationContext, R.layout.activity_translate, null)
             (inflate.findViewById(R.id.txvOriginal) as TextView).text = original
             val prbTranslate = inflate.findViewById(R.id.prbTranslate)
@@ -46,7 +46,7 @@ class TranslateActivity : Activity() {
                 finish()
             }
 
-            alertDialog.window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+            alertDialog.window.setBackgroundDrawable(colorDrawable);
             alertDialog.show()
 
             var restAdapter = RestAdapter.Builder()

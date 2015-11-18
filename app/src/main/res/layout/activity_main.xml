@@ -4,7 +4,7 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
+
         android:orientation="vertical"
         android:weightSum="2"
         tools:context=".MainActivity">
@@ -12,17 +12,18 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:animateLayoutChanges="true">
 
                 <TextView
-                    android:id="@+id/txvOriginalText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/main_color"
-                    android:gravity="center"
-                    android:text="@string/original_text"
-                    android:textAppearance="?android:attr/textAppearanceLarge"/>
+                        android:id="@+id/txvOriginalText"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:background="@color/main_color"
+                        android:gravity="center"
+                        android:text="@string/original_text"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:layout_weight="1"/>
 
                 <TextView
                         android:id="@+id/txvTranslateText"
