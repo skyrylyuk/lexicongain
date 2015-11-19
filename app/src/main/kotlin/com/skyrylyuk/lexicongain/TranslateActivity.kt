@@ -5,14 +5,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
-import com.google.gson.JsonObject
 import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
 import retrofit.RestAdapter
 import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Func1
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -33,6 +33,11 @@ class TranslateActivity : Activity() {
         val colorDrawable = ColorDrawable(android.graphics.Color.TRANSPARENT)
         window.setBackgroundDrawable(colorDrawable)
 
+
+
+        //        setContentView(R.layout.activity_translate)
+
+
         if (intent.action == Intent.ACTION_SEND) {
             val original = intent.getStringExtra(Intent.EXTRA_TEXT).trim()
 
@@ -44,9 +49,12 @@ class TranslateActivity : Activity() {
             alertDialog.setView(inflate)
             alertDialog.setOnDismissListener {
                 finish()
+                overridePendingTransition(0, 0)
             }
 
-            alertDialog.window.setBackgroundDrawable(colorDrawable);
+            alertDialog.window.setGravity(Gravity.TOP)
+            alertDialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
             alertDialog.show()
 
             var restAdapter = RestAdapter.Builder()
@@ -57,11 +65,7 @@ class TranslateActivity : Activity() {
 
             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                     .observeOn(Schedulers.computation())
-                    .map(object : Func1<JsonObject, String> {
-                        override fun call(response: JsonObject): String {
-                            return response.get(YandexTranslate.TEXT).asString
-                        }
-                    })
+                    .map({ response -> response.get(YandexTranslate.TEXT).asString })
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
                         txvTranslate.text = it
@@ -75,8 +79,6 @@ class TranslateActivity : Activity() {
                     }
                     .subscribeOn(Schedulers.trampoline())
                     .subscribe { translation ->
-                        // TODO extract save to separate function
-
                         // Open the default realm
                         var realm = Realm.getDefaultInstance()
 
@@ -94,5 +96,7 @@ class TranslateActivity : Activity() {
                         realm.commitTransaction()
                     }
         }
+
+
     }
 }
