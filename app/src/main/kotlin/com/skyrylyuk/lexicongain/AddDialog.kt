@@ -11,6 +11,7 @@ import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
 import org.jetbrains.anko.UI
 import org.jetbrains.anko.editText
+import org.jetbrains.anko.padding
 import org.jetbrains.anko.verticalLayout
 import retrofit.RestAdapter
 import rx.android.schedulers.AndroidSchedulers
@@ -36,29 +37,25 @@ class AddDialog : DialogFragment() {
 
         val view = UI {
             verticalLayout {
-                val a: EditText = editText {
+                padding = 5
+                val txvOriginal: EditText = editText {
                     hint = "Original text"
-                    // textChangedListener { afterTextChanged(afterTextChangedFunction) }
                 }
-                val b: EditText = editText {
+                val txvTranslation: EditText = editText {
                     hint = "Translated text"
                 }
 
-                a.afterTextChangeEvents()
+                txvOriginal.afterTextChangeEvents()
                         .skip(1)
                         .debounce(650, TimeUnit.MILLISECONDS)
-                        .map {
-                            println("map")
-                            it.editable().toString()
-                        }
-                        .map { it ->
-                            original = it
+                        .doOnNext {
+                            original = it.editable().toString()
                             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                                     .map({ response -> response.get(YandexTranslate.TEXT).asString })
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe {
                                         translation = it
-                                        b.setText(translation)
+                                        txvTranslation.setText(translation)
                                     }
                         }
                         .subscribe()
@@ -68,25 +65,13 @@ class AddDialog : DialogFragment() {
         val dialog = AlertDialog.Builder(activity)
                 .setView(view)
                 .setPositiveButton("Ok", onPositiveFunction)
+                .setNegativeButton("Cancel", null)
                 .create()
 
         return dialog
     }
 
-    /*
-        val afterTextChangedFunction: (Editable?) -> Unit = {
-            println(it)
-
-            Observable.just(it)
-                    .debounce(3, TimeUnit.SECONDS)
-                    .subscribe {
-                        println("it = $it")
-                    }
-        }
-    */
-
     val onPositiveFunction: (DialogInterface, Int) -> Unit = { dialog, which ->
-        System.out.println("AddDialog.onPositiveFunction");
         // Open the default realm
         var realm = Realm.getDefaultInstance()
 
@@ -102,11 +87,10 @@ class AddDialog : DialogFragment() {
 
         // When the transaction is committed, all changes a synced to disk.
         realm.commitTransaction()
-
     }
 
 
-    companion object AddDialogBuilder {
+    companion object {
 
         public val TAG: String = AddDialog::class.java.simpleName
 
