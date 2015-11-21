@@ -47,6 +47,8 @@ class MainActivity : AppCompatActivity() {
 
         addButton.setOnClickListener {
             println("addButton.setOnClickListener")
+
+            AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
         }
 
         txvOriginalText.setOnClickListener {
