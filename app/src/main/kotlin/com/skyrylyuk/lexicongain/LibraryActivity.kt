@@ -40,10 +40,7 @@ class LibraryActivity : AppCompatActivity() {
             itemsCanFocus = false
             adapter = tokenPairAdapter
             onItemClick { adapterView, view, i, l ->
-                println("i = $i l = $l")
                 val tokenPair = tokenPairAdapter.getItem(i)
-
-                println("tokenPair = ${tokenPair}")
 
                 AddDialog.newInstance(tokenPair.originalText).show(fragmentManager, AddDialog.TAG)
             }
@@ -64,22 +61,17 @@ class LibraryActivity : AppCompatActivity() {
                         R.id.action_delete -> {
                             val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
 
-                            // Open the default realm
-                            var realm = Realm.getDefaultInstance()
-
                             // All writes must be wrapped in a transaction to facilitate safe multi threading
                             realm.beginTransaction()
 
-                            val size = selectedIds.size()
-                            println("**************************************")
-                            println("size = ${size}")
-                            for (i in 0..size) {
+                            for (i in 0..selectedIds.size()) {
                                 if (selectedIds.valueAt(i)) {
                                     val tokenPair = tokenPairAdapter.getItem(selectedIds.keyAt(i))
                                     print("tokenPair = ${tokenPair.originalText}")
-                                    realm.where(TokenPair::class.java).equalTo("originalText", tokenPair.originalText).findAll().removeLast()
-                                    //                                    val isRemove = realmResults.removeF(tokenPair)
-                                    //                                    println("isRemove = $isRemove")
+                                    realm.where(TokenPair::class.java)
+                                            .equalTo("originalText", tokenPair.originalText)
+                                            .findAll()
+                                            .removeLast()
                                 }
                             }
 
@@ -101,7 +93,7 @@ class LibraryActivity : AppCompatActivity() {
 
                 override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                     supportActionBar.setHomeActionContentDescription("ContentDescription")
-                    println("onCreateActionMode")
+
                     mode?.menuInflater?.inflate(R.menu.library_main, menu)
 
                     return true

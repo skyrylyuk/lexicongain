@@ -97,7 +97,9 @@ class AddDialog : DialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        dialog.window.attributes.windowAnimations = R.style.DialogAnimation_Window
+        if (arguments.getString(KEY, "").isEmpty()) {
+            dialog.window.attributes.windowAnimations = R.style.DialogAnimation_Window
+        }
     }
 
     override fun onDestroy() {
