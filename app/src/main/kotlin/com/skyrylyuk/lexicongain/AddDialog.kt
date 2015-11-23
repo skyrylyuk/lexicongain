@@ -71,6 +71,12 @@ class AddDialog : DialogFragment() {
         return dialog
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        dialog.window.attributes.windowAnimations = R.style.DialogAnimation_Window
+    }
+
     val onPositiveFunction: (DialogInterface, Int) -> Unit = { dialog, which ->
         // Open the default realm
         var realm = Realm.getDefaultInstance()

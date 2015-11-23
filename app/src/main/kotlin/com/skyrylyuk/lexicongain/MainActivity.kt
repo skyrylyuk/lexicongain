@@ -2,6 +2,7 @@ package com.skyrylyuk.lexicongain
 
 import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -14,10 +15,10 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.Transformation
 import android.widget.LinearLayout
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.util.plus
 import io.realm.Realm
 import kotlinx.android.synthetic.activity_main.*
 import org.jetbrains.anko.startActivity
-import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -29,8 +30,6 @@ class MainActivity : AppCompatActivity() {
 
     val SENSITIVE: Int = 10
     val THRESHOLD = 15
-
-    private val TIME_SHIFT_PERIOD = TimeUnit.MILLISECONDS.convert(3, TimeUnit.DAYS)
 
     var realm: Realm by Delegates.notNull()
 
@@ -60,7 +59,8 @@ class MainActivity : AppCompatActivity() {
             txvTranslateText.startAnimation(animation)
         }
 
-        val color = resources.getColor(R.color.slave_color)
+
+        val color = ContextCompat.getColor(this, R.color.slave_color);
         var startX: Float = 0f
         val hsv = FloatArray(3)
         var shift: Int
@@ -84,10 +84,10 @@ class MainActivity : AppCompatActivity() {
                 ACTION_UP, ACTION_OUTSIDE -> {
                     when {
                         shift > THRESHOLD -> {
-                            markOldestCard(1)
+                            markOldestCard(true)
                         }
                         shift < -THRESHOLD -> {
-                            markOldestCard(3)
+                            markOldestCard(false)
                         }
                         else -> {
                             //todo  add default action or implement null operation
@@ -139,17 +139,32 @@ class MainActivity : AppCompatActivity() {
         realm.close()
     }
 
-    fun markOldestCard(date: Int) {
+    fun markOldestCard(date: Boolean) {
         val allObjects = realm.allObjects(TokenPair::class.java)
         allObjects.sort("updateDate")
 
         if (allObjects.size > 0) {
             val tokenPair = allObjects.first()
             realm.executeTransaction {
-                if (date != 0)
-                    tokenPair.updateDate = Date(tokenPair.updateDate.time + TIME_SHIFT_PERIOD)
+                realm.copyToRealmOrUpdate(tokenPair.apply {
+
+                    if (date) {
+                        phase++
+                    }
+
+                    updateDate += getPhaseDuration(phase)
+                })
             }
         }
+    }
+
+    fun getPhaseDuration(phase: Int): Long {
+        val sqrt5 = Math.sqrt(5.0)
+        val phi = (sqrt5 + 1) / 2
+
+        Math.floor(Math.pow(phi, phase.toDouble()) / sqrt5 + 0.5).toInt()
+
+        return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
     }
 
     fun showOldestCard() {

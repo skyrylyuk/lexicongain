@@ -22,7 +22,7 @@ public open class TokenPair(
 
         public open var updateDate: Date = Date(),
 
-        public open var phase: Int = 0
+        public open var phase: Int = 1
 
 ) : RealmObject () {
 
