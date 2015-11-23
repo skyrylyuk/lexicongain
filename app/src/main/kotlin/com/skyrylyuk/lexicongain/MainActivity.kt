@@ -140,21 +140,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun markOldestCard(date: Boolean) {
-        val allObjects = realm.allObjects(TokenPair::class.java)
-        allObjects.sort("updateDate")
 
-        if (allObjects.size > 0) {
-            val tokenPair = allObjects.first()
-            realm.executeTransaction {
-                realm.copyToRealmOrUpdate(tokenPair.apply {
+        val tokenPair = realm.where(TokenPair::class.java).findAllSorted("updateDate").first()
 
-                    if (date) {
-                        phase++
-                    }
+        realm.executeTransaction {
+            realm.copyToRealmOrUpdate(tokenPair.apply {
 
-                    updateDate += getPhaseDuration(phase)
-                })
-            }
+                if (date) {
+                    phase++
+                }
+
+                updateDate += getPhaseDuration(phase)
+            })
         }
     }
 
@@ -171,14 +168,10 @@ class MainActivity : AppCompatActivity() {
         txvTranslateText.visibility = View.GONE
         txvTranslateText.setBackgroundResource(R.color.slave_color)
 
-        val allObjects = realm.allObjects(TokenPair::class.java)
-        allObjects.sort("updateDate")
+        val findFirst = realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
 
-        if (allObjects.size != 0) {
-            val findFirst = allObjects.first()
-            txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
-            txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
-        }
+        txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
+        txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
     }
 
     class ExpandAnimation(internal val view: View) : Animation() {

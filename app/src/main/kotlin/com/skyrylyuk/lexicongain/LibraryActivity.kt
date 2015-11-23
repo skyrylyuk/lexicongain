@@ -24,21 +24,28 @@ class LibraryActivity : AppCompatActivity() {
 
     private val realm = Realm.getDefaultInstance()
 
-    private val realmResults = realm.where(TokenPair::class.java).findAll()
+    private var realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar.setDisplayHomeAsUpEnabled(true)
 
+        realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
+
+        val tokenPairAdapter = TokenPairAdapter(this, realmResults, true)
 
         listView {
             choiceMode = ListView.CHOICE_MODE_MULTIPLE_MODAL
             itemsCanFocus = false
-            val tokenPairAdapter = TokenPairAdapter(context, realmResults, true)
             adapter = tokenPairAdapter
             onItemClick { adapterView, view, i, l ->
                 println("i = $i l = $l")
+                val tokenPair = tokenPairAdapter.getItem(i)
+
+                println("tokenPair = ${tokenPair}")
+
+                AddDialog.newInstance(tokenPair.originalText).show(fragmentManager, AddDialog.TAG)
             }
             setMultiChoiceModeListener(object : AbsListView.MultiChoiceModeListener {
                 override fun onItemCheckedStateChanged(mode: ActionMode?, position: Int, id: Long, checked: Boolean) {

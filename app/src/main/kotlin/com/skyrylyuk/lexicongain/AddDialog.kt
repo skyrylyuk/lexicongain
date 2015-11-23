@@ -24,10 +24,23 @@ import java.util.concurrent.TimeUnit
  */
 class AddDialog : DialogFragment() {
 
+    // Open the default realm
+    var realm = Realm.getDefaultInstance()
+
+
     var original: String = ""
     var translation: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+
+        val key: String = arguments.getString(KEY, "")
+
+        if (key.isNotEmpty()) {
+            val tokenPair = realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
+            original = tokenPair.originalText
+            translation = tokenPair.translateText
+        }
+
 
         var restAdapter = RestAdapter.Builder()
                 .setEndpoint(YandexTranslate.HOST)
@@ -40,9 +53,11 @@ class AddDialog : DialogFragment() {
                 padding = 5
                 val txvOriginal: EditText = editText {
                     hint = "Original text"
+                    setText(original)
                 }
                 val txvTranslation: EditText = editText {
                     hint = "Translated text"
+                    setText(translation)
                 }
 
                 txvOriginal.afterTextChangeEvents()
@@ -57,6 +72,14 @@ class AddDialog : DialogFragment() {
                                         translation = it
                                         txvTranslation.setText(translation)
                                     }
+                        }
+                        .subscribe()
+
+                txvTranslation.afterTextChangeEvents()
+                        .skip(1)
+                        .debounce(650, TimeUnit.MILLISECONDS)
+                        .doOnNext {
+                            translation = it.editable().toString()
                         }
                         .subscribe()
             }
@@ -77,14 +100,27 @@ class AddDialog : DialogFragment() {
         dialog.window.attributes.windowAnimations = R.style.DialogAnimation_Window
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        realm.close()
+    }
+
     val onPositiveFunction: (DialogInterface, Int) -> Unit = { dialog, which ->
-        // Open the default realm
-        var realm = Realm.getDefaultInstance()
 
         // All writes must be wrapped in a transaction to facilitate safe multi threading
         realm.beginTransaction()
 
-        val tokenPair = TokenPair().apply {
+        val key: String = arguments.getString(KEY, "")
+
+        val tokenPair = if (key.isNotEmpty()) {
+            realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
+        } else {
+            TokenPair()
+        }
+
+
+        tokenPair.apply {
             originalText = original
             translateText = translation
         }
@@ -99,9 +135,14 @@ class AddDialog : DialogFragment() {
     companion object {
 
         public val TAG: String = AddDialog::class.java.simpleName
+        private val KEY: String = "TOKEN_PAIR_KEY"
 
-        fun newInstance(): AddDialog {
+        fun newInstance(tokenPairKey: String = ""): AddDialog {
             val args = Bundle()
+
+            if (tokenPairKey.isNotEmpty()) {
+                args.putString(KEY, tokenPairKey)
+            }
 
             val fragment = AddDialog()
             fragment.arguments = args
