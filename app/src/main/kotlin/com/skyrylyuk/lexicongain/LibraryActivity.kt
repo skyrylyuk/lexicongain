@@ -36,6 +36,7 @@ class LibraryActivity : AppCompatActivity() {
         val tokenPairAdapter = TokenPairAdapter(this, realmResults, true)
 
         listView {
+            id = android.R.id.list
             choiceMode = ListView.CHOICE_MODE_MULTIPLE_MODAL
             itemsCanFocus = false
             adapter = tokenPairAdapter
