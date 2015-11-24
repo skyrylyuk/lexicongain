@@ -3,6 +3,7 @@ package com.skyrylyuk.lexicongain
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.util.SparseBooleanArray
 import android.view.*
@@ -15,6 +16,7 @@ import io.realm.RealmBaseAdapter
 import io.realm.RealmResults
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.onItemClick
+import java.io.File
 
 /**
  *
@@ -95,7 +97,7 @@ class LibraryActivity : AppCompatActivity() {
                 override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                     supportActionBar.setHomeActionContentDescription("ContentDescription")
 
-                    mode?.menuInflater?.inflate(R.menu.library_main, menu)
+                    mode?.menuInflater?.inflate(R.menu.library_action_mode_menu, menu)
 
                     return true
                 }
@@ -109,11 +111,11 @@ class LibraryActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        realm.close()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater?.inflate(R.menu.library_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
         when (item?.itemId) {
@@ -122,9 +124,46 @@ class LibraryActivity : AppCompatActivity() {
                 finish()
                 return true
             }
+            R.id.action_export -> {
+                val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file: File = File(dir, "lexicongain.backup")
+
+                println("delete")
+                file.delete()
+
+                realm.where(TokenPair::class.java).findAll().forEach { pair ->
+                    println("pair = ${pair}")
+                    file.appendText("${pair.originalText}:${pair.translateText}:${pair.phase}:\n")
+                }
+            }
+            R.id.action_import -> {
+                val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file: File = File(dir, "lexicongain.backup")
+
+                if (file.exists()) {
+                    realm.executeTransaction {
+                        file.readLines().forEach {
+                            val split = it.split(":")
+                            println("it = $split")
+                            realm.copyToRealm(TokenPair(
+                                    originalText = split[0],
+                                    translateText = split[1],
+                                    phase = split[2].toInt()
+                            ))
+                        }
+
+                    }
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        realm.close()
     }
 
     class TokenPairAdapter(context: Context, realmResults: RealmResults<TokenPair>, automaticUpdate: Boolean) :

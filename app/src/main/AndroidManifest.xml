@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.skyrylyuk.lexicongain">
+    package="com.skyrylyuk.lexicongain"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
             android:name=".LexiconGainApplication"
@@ -20,10 +21,10 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="TranslateActivity"
-                android:label="@string/add_card"
-                android:exported="true"
-                android:theme="@style/Theme.Transparent">
+            android:name="TranslateActivity"
+            android:exported="true"
+            android:label="@string/add_card"
+            android:theme="@style/Theme.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
