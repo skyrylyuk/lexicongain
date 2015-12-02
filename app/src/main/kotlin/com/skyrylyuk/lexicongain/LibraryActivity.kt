@@ -16,6 +16,7 @@ import io.realm.RealmBaseAdapter
 import io.realm.RealmResults
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.onItemClick
+import rx.Observable
 import java.io.File
 
 /**
@@ -24,7 +25,7 @@ import java.io.File
  */
 class LibraryActivity : AppCompatActivity() {
 
-    private val realm = Realm.getDefaultInstance()
+    private val realm: Realm = Realm.getDefaultInstance()
 
     private var realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
 
@@ -65,22 +66,23 @@ class LibraryActivity : AppCompatActivity() {
                             val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
 
                             // All writes must be wrapped in a transaction to facilitate safe multi threading
-                            realm.beginTransaction()
-
-                            for (i in 0..selectedIds.size()) {
-                                if (selectedIds.valueAt(i)) {
-                                    val tokenPair = tokenPairAdapter.getItem(selectedIds.keyAt(i))
-                                    print("tokenPair = ${tokenPair.originalText}")
-                                    realm.where(TokenPair::class.java)
-                                            .equalTo("originalText", tokenPair.originalText)
-                                            .findAll()
-                                            .removeLast()
-                                }
-                            }
 
 
-                            // When the transaction is committed, all changes a synced to disk.
-                            realm.commitTransaction()
+                            Observable.range(0, selectedIds.size())
+                                    .filter { selectedIds.valueAt(it) }
+                                    .map { tokenPairAdapter.getItem(selectedIds.keyAt(it)) }
+                                    .filter { it != null }
+                                    .subscribe { tokenPair ->
+                                        realm.beginTransaction()
+                                        realm.where(TokenPair::class.java)
+                                                .equalTo("originalText", tokenPair.originalText)
+                                                .findAll()
+                                                .clear()
+
+                                        // When the transaction is committed, all changes a synced to disk.
+                                        realm.commitTransaction()
+                                    }
+
 
                             mode?.finish()
                             tokenPairAdapter.removeSelection()
@@ -128,13 +130,11 @@ class LibraryActivity : AppCompatActivity() {
                 val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 val file: File = File(dir, "lexicongain.backup")
 
-                println("delete")
                 file.delete()
 
-                realm.where(TokenPair::class.java).findAll().forEach { pair ->
-                    println("pair = ${pair}")
-                    file.appendText("${pair.originalText}:${pair.translateText}:${pair.phase}:\n")
-                }
+                realm.writeCopyTo(file)
+
+                println("Complite")
             }
             R.id.action_import -> {
                 val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
