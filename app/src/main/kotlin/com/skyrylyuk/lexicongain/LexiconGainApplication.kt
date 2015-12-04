@@ -18,7 +18,6 @@ class LexiconGainApplication : Application() {
         val realmConfig: RealmConfiguration = RealmConfiguration.Builder(applicationContext)
                 .name("myrealm.realm")
                 .setModules(DBModule())
-                //                .migration(DBMigration())
                 .build()
 
         Realm.setDefaultConfiguration(realmConfig)
