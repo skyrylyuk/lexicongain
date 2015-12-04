@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
-import retrofit.RestAdapter
+import retrofit.Retrofit
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -57,8 +57,8 @@ class TranslateActivity : Activity() {
 
             alertDialog.show()
 
-            var restAdapter = RestAdapter.Builder()
-                    .setEndpoint(YandexTranslate.HOST)
+            var restAdapter = Retrofit.Builder()
+                    .baseUrl(YandexTranslate.HOST)
                     .build()
 
             val service = restAdapter.create(YandexTranslate::class.java)

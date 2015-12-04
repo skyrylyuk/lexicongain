@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.github.ben-manes.versions' // Task dependencyUpdates
 
 android {
     compileSdkVersion 23
@@ -69,25 +69,22 @@ dependencies {
 
     // Rx
     compile 'io.reactivex:rxandroid:1.0.1'
-//    compile 'io.reactivex:rxandroid:1.0.0-rc1'
-//    compile 'io.reactivex:rxandroid:0.25.0'
     compile 'com.jakewharton.rxbinding:rxbinding-kotlin:0.3.0'
 
     // Retrofit
-    //TODO update retrofit
-//    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
-//    compile 'org.immutables:gson:2.1.0'
-    // Network support
+    compile "com.squareup.retrofit:retrofit:${retrofit_version}"
+    compile "com.squareup.retrofit:adapter-rxjava:${retrofit_version}"
+    compile "com.squareup.retrofit:converter-gson:${retrofit_version}"
     compile 'com.squareup.okhttp:okhttp:2.6.0'
 
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-2423'
-    ext.anko_version = '0.7.+'
+    ext.kotlin_version = '1.0.0-beta-3594'
+    ext.anko_version = '0.8'
 
-//    ext.realm_version = '0.84.2-SNAPSHOT'
-    ext.realm_version = '0.85.1'
+    ext.realm_version = '0.86.0'
+
+    ext.retrofit_version = '2.0.0-beta2'
 
     repositories {
         jcenter()

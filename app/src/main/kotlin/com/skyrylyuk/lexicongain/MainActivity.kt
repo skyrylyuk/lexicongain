@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         val color = ContextCompat.getColor(this, R.color.slave_color);
         var startX: Float = 0f
         val hsv = FloatArray(3)
-        var shift: Int
+        var shift: Int = 0
 
         txvTranslateText.setOnTouchListener { view, motionEvent: MotionEvent ->
             val actionMasked = motionEvent.actionMasked

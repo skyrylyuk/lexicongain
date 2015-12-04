@@ -13,7 +13,9 @@ import org.jetbrains.anko.UI
 import org.jetbrains.anko.editText
 import org.jetbrains.anko.padding
 import org.jetbrains.anko.verticalLayout
-import retrofit.RestAdapter
+import retrofit.GsonConverterFactory
+import retrofit.Retrofit
+import retrofit.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
 
@@ -42,8 +44,10 @@ class AddDialog : DialogFragment() {
         }
 
 
-        var restAdapter = RestAdapter.Builder()
-                .setEndpoint(YandexTranslate.HOST)
+        var restAdapter = Retrofit.Builder()
+                .baseUrl(YandexTranslate.HOST)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build()
 
         val service = restAdapter.create(YandexTranslate::class.java)
@@ -73,6 +77,9 @@ class AddDialog : DialogFragment() {
                                         txvTranslation.setText(translation)
                                     }
                         }
+                        .doOnError {
+                            println("it = ${it}")
+                        }
                         .subscribe()
 
                 txvTranslation.afterTextChangeEvents()
@@ -83,7 +90,7 @@ class AddDialog : DialogFragment() {
                         }
                         .subscribe()
             }
-        }.toView()
+        }.view
 
         val dialog = AlertDialog.Builder(activity)
                 .setView(view)
