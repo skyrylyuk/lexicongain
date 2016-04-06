@@ -4,10 +4,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.*
 import android.view.MotionEvent.*
 import android.view.animation.Animation
-import android.view.animation.AnticipateInterpolator
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.plus
@@ -33,15 +33,14 @@ class MainActivity : AppCompatActivity() {
     var txvTranslateText: TextView by Delegates.notNull()
 
     var startX: Float = 0f
-    val hsv = FloatArray(3)
+    val hsvSource = FloatArray(3)
     var shift: Float = 0f
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val color = ContextCompat.getColor(this, R.color.slave_color);
+        val slaveColor = ContextCompat.getColor(this, R.color.slave_color);
         verticalLayout {
             backgroundColor = Color.CYAN
             txvOriginalText = textView {
@@ -49,6 +48,7 @@ class MainActivity : AppCompatActivity() {
                 onClick {
                     txvTranslateText.visibility = View.VISIBLE
                     txvTranslateText.startAnimation(ExpandAnimation(txvTranslateText))
+                    txvTranslateText.backgroundColor = slaveColor
                 }
             }.lparams(width = matchParent, height = 0, weight = 1f)
 
@@ -62,12 +62,13 @@ class MainActivity : AppCompatActivity() {
                             startX = motionEvent.x
                         }
                         ACTION_MOVE -> {
-                            Color.colorToHSV(color, hsv)
+                            Color.colorToHSV(slaveColor, hsvSource)
 
-                            shift = ((startX - motionEvent.x) / SENSITIVE)
-                            hsv[0] = shift
+                            shift = (startX - motionEvent.x) / SENSITIVE
+                            hsvSource[0] += shift
+                            Log.w("MainActivity", " $shift ${hsvSource[0]}")
 
-                            view.setBackgroundColor(Color.HSVToColor(hsv))
+                            view.setBackgroundColor(Color.HSVToColor(hsvSource))
                         }
 
                         ACTION_UP, ACTION_OUTSIDE -> {
@@ -161,17 +162,20 @@ class MainActivity : AppCompatActivity() {
 
     fun markOldestCard(date: Boolean) {
 
-        val tokenPair = realm.where(TokenPair::class.java).findAllSorted("updateDate").first()
+        if (realm.where(TokenPair::class.java).count() > 0) {
 
-        realm.executeTransaction {
-            realm.copyToRealmOrUpdate(tokenPair.apply {
+            val tokenPair = realm.where(TokenPair::class.java).findAllSorted("updateDate").first()
 
-                if (date) {
-                    phase++
-                }
+            realm.executeTransaction {
+                realm.copyToRealmOrUpdate(tokenPair.apply {
 
-                updateDate += getPhaseDuration(phase)
-            })
+                    if (date) {
+                        phase++
+                    }
+
+                    updateDate += getPhaseDuration(phase)
+                })
+            }
         }
     }
 
