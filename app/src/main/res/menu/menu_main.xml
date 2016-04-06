@@ -3,6 +3,12 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
     <item
+            android:id="@+id/action_irregular_verbs"
+            android:title="@string/title_activity_irregular_verbs"
+            android:icon="@drawable/ic_irregular_verbs"
+            android:orderInCategory="100"
+            app:showAsAction="ifRoom"/>
+    <item
             android:id="@+id/action_library"
             android:title="@string/action_library"
             android:icon="@drawable/ic_create_white"

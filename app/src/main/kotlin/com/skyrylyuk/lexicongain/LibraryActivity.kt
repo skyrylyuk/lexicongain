@@ -32,7 +32,7 @@ class LibraryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportActionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
 
@@ -97,7 +97,7 @@ class LibraryActivity : AppCompatActivity() {
                 }
 
                 override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                    supportActionBar.setHomeActionContentDescription("ContentDescription")
+                    supportActionBar?.setHomeActionContentDescription("ContentDescription")
 
                     mode?.menuInflater?.inflate(R.menu.library_action_mode_menu, menu)
 
@@ -107,7 +107,7 @@ class LibraryActivity : AppCompatActivity() {
                 override fun onDestroyActionMode(mode: ActionMode?) {
                     println("onDestroyActionMode")
                     tokenPairAdapter.removeSelection()
-                    supportActionBar.setDisplayHomeAsUpEnabled(true)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
                 }
             })
         }
@@ -192,7 +192,7 @@ class LibraryActivity : AppCompatActivity() {
             return inflate
         }
 
-        public fun selectView(position: Int, value: Boolean) {
+        fun selectView(position: Int, value: Boolean) {
             if (value) {
                 mSelectedItemsIds.put(position, value)
             } else {

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.util.YandexTranslate
 import io.realm.Realm
 import org.jetbrains.anko.UI
 import org.jetbrains.anko.editText
@@ -17,6 +18,7 @@ import retrofit.GsonConverterFactory
 import retrofit.Retrofit
 import retrofit.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 
@@ -34,6 +36,8 @@ class AddDialog : DialogFragment() {
     var translation: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
+
+        println("override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {")
 
         val key: String = arguments.getString(KEY, "")
 
@@ -72,13 +76,17 @@ class AddDialog : DialogFragment() {
                             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                                     .map({ response -> response.get(YandexTranslate.TEXT).asString })
                                     .observeOn(AndroidSchedulers.mainThread())
+                                    .doOnError {
+                                        println("Error!!!")
+                                    }
+                                    .subscribeOn(Schedulers.io())
                                     .subscribe {
                                         translation = it
                                         txvTranslation.setText(translation)
                                     }
                         }
                         .doOnError {
-                            println("it = ${it}")
+                            println("it = $it")
                         }
                         .subscribe()
 
@@ -143,8 +151,8 @@ class AddDialog : DialogFragment() {
 
     companion object {
 
-        public val TAG: String = AddDialog::class.java.simpleName
-        private val KEY: String = "TOKEN_PAIR_KEY"
+        val TAG: String = AddDialog::class.java.simpleName
+        val KEY: String = "TOKEN_PAIR_KEY"
 
         fun newInstance(tokenPairKey: String = ""): AddDialog {
             val args = Bundle()

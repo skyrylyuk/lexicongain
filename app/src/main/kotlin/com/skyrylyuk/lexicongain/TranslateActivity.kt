@@ -10,8 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.util.YandexTranslate
 import io.realm.Realm
+import retrofit.GsonConverterFactory
 import retrofit.Retrofit
+import retrofit.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -59,14 +62,17 @@ class TranslateActivity : Activity() {
 
             var restAdapter = Retrofit.Builder()
                     .baseUrl(YandexTranslate.HOST)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build()
 
             val service = restAdapter.create(YandexTranslate::class.java)
 
             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                     .observeOn(Schedulers.computation())
-                    .map({ response -> response.get(YandexTranslate.TEXT).asString })
-                    .observeOn(AndroidSchedulers.mainThread())
+                    .map{ response ->
+                        response.get(YandexTranslate.TEXT).asString
+                    }.observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
                         txvTranslate.text = it
                         txvTranslate.visibility = View.VISIBLE
@@ -77,8 +83,8 @@ class TranslateActivity : Activity() {
                     .doOnNext {
                         alertDialog.dismiss()
                     }
-                    .subscribeOn(Schedulers.trampoline())
-                    .subscribe { translation ->
+                    .subscribeOn(Schedulers.io())
+                    .subscribe { //translation ->
                         // Open the default realm
                         var realm = Realm.getDefaultInstance()
 
@@ -87,7 +93,7 @@ class TranslateActivity : Activity() {
 
                         val tokenPair = TokenPair().apply {
                             originalText = original
-                            translateText = translation
+                            translateText = "translation"
                         }
 
                         realm.copyToRealmOrUpdate(tokenPair)
@@ -96,7 +102,6 @@ class TranslateActivity : Activity() {
                         realm.commitTransaction()
                     }
         }
-
 
     }
 }

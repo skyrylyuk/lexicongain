@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.github.ben-manes.versions' // Task dependencyUpdates
 
@@ -60,7 +61,7 @@ dependencies {
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.anko:anko-sdk15:$anko_version"
+    compile "org.jetbrains.anko:anko-sdk23:$anko_version"
     compile "org.jetbrains.anko:anko-appcompat-v7:$anko_version" // For appcompat-v7 bindings
 
     // Realm

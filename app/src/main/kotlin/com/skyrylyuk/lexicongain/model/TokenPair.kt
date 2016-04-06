@@ -11,18 +11,20 @@ import java.util.*
  */
 
 @RealmClass
-public open class TokenPair(
+open class TokenPair(
 
         @PrimaryKey
-        public open var originalText: String = "",
+        open var originalText: String = "",
 
-        public open var translateText: String = "",
+        open var translateText: String = "",
 
-        public open var creationDate: Date = Date(),
+        open var isIrregularVerb: Boolean = false,
 
-        public open var updateDate: Date = Date(),
+        open var creationDate: Date = Date(),
 
-        public open var phase: Int = 1
+        open var updateDate: Date = Date(),
+
+        open var phase: Int = 1
 
 ) : RealmObject () {
 

@@ -21,4 +21,8 @@
         <item>Three</item>
         <item>Four</item>
     </array>
+
+    <string name="title_activity_irregular_verbs">Irregular Verbs</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>
