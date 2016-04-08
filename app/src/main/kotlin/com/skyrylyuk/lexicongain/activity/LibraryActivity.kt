@@ -1,4 +1,4 @@
-package com.skyrylyuk.lexicongain
+package com.skyrylyuk.lexicongain.activity
 
 import android.content.Context
 import android.graphics.Color
@@ -10,6 +10,7 @@ import android.view.*
 import android.widget.AbsListView
 import android.widget.ListView
 import android.widget.TextView
+import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
 import io.realm.Realm
 import io.realm.RealmBaseAdapter

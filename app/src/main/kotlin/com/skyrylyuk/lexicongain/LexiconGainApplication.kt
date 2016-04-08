@@ -3,8 +3,10 @@ package com.skyrylyuk.lexicongain
 import android.app.Application
 import com.skyrylyuk.lexicongain.model.DBModule
 import com.skyrylyuk.lexicongain.model.IrregularVerb
+import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import javax.inject.Inject
 
 
 /**
@@ -13,9 +15,14 @@ import io.realm.RealmConfiguration
  */
 class LexiconGainApplication : Application() {
 
+    companion object {
+        //platformStatic allow access it from java code
+        @JvmStatic lateinit var graph: ApplicationComponent
+    }
+
     override fun onCreate() {
 
-        println("TAG ==================================================")
+
         // Setup
         val realmConfig: RealmConfiguration = RealmConfiguration.Builder(applicationContext)
                 .name("lexicon.realm")
@@ -30,6 +37,8 @@ class LexiconGainApplication : Application() {
                 instance.createAllFromJson(IrregularVerb::class.java, assets.open("IrregularVerb.json"))
             }
         }
+
+        graph = DaggerApplicationComponent.builder().androidModule(AndroidModule(this)).build()
 
     }
 }

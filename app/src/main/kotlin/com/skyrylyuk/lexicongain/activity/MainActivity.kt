@@ -1,4 +1,4 @@
-package com.skyrylyuk.lexicongain
+package com.skyrylyuk.lexicongain.activity
 
 import android.graphics.Color
 import android.os.Bundle
@@ -9,13 +9,17 @@ import android.view.*
 import android.view.MotionEvent.*
 import android.view.animation.Animation
 import android.widget.TextView
+import com.skyrylyuk.lexicongain.LexiconGainApplication
+import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
 import com.skyrylyuk.lexicongain.util.plus
 import com.skyrylyuk.lexicongain.view.CollapseAnimation
 import com.skyrylyuk.lexicongain.view.ExpandAnimation
 import io.realm.Realm
 import org.jetbrains.anko.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 /**
@@ -27,6 +31,9 @@ class MainActivity : AppCompatActivity() {
     val SENSITIVE: Int = 10
     val THRESHOLD = 15
 
+    @Inject
+    lateinit var irregularVerbPresenter: IrregularVerbPresenter
+
     var realm: Realm by Delegates.notNull()
 
     var txvOriginalText: TextView by Delegates.notNull()
@@ -36,14 +43,21 @@ class MainActivity : AppCompatActivity() {
     val hsvSource = FloatArray(3)
     var shift: Float = 0f
 
+    val TAG = MainActivity::class.java.simpleName
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LexiconGainApplication.graph.inject(this)
 
+
+        val mainColor = ContextCompat.getColor(this, R.color.main_color)
         val slaveColor = ContextCompat.getColor(this, R.color.slave_color);
         verticalLayout {
-            backgroundColor = Color.CYAN
             txvOriginalText = textView {
+                backgroundColor = mainColor
+                textColor = Color.BLACK
                 gravity = Gravity.CENTER
                 onClick {
                     txvTranslateText.visibility = View.VISIBLE
@@ -53,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             }.lparams(width = matchParent, height = 0, weight = 1f)
 
             txvTranslateText = textView {
+                textColor = Color.BLACK
                 gravity = Gravity.CENTER
                 onTouch { view, motionEvent: MotionEvent ->
                     val actionMasked = motionEvent.actionMasked
@@ -66,7 +81,6 @@ class MainActivity : AppCompatActivity() {
 
                             shift = (startX - motionEvent.x) / SENSITIVE
                             hsvSource[0] += shift
-                            Log.w("MainActivity", " $shift ${hsvSource[0]}")
 
                             view.setBackgroundColor(Color.HSVToColor(hsvSource))
                         }
@@ -92,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                                 override fun onAnimationEnd(animation: Animation?) {
-                                    showOldestCard()
+                                    irregularVerbPresenter.showOldestCard()
                                 }
 
                                 override fun onAnimationStart(animation: Animation?) {
@@ -107,30 +121,19 @@ class MainActivity : AppCompatActivity() {
             }.lparams(width = matchParent, height = 0, weight = 1f)
         }
 
-
+        irregularVerbPresenter.attachView(txvOriginalText, txvTranslateText)
         // Open the default realm for the UI thread.
         realm = Realm.getDefaultInstance()
 
-        showOldestCard()
+        irregularVerbPresenter.showOldestCard()
         /*
-
-
                 addButton.setOnClickListener {
                     println("addButton.setOnClickListener")
-
                     AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
                 }
 
                 txvOriginalText.setOnClickListener {
-
-
                 }
-
-
-
-
-
-
         */
     }
 
@@ -188,6 +191,7 @@ class MainActivity : AppCompatActivity() {
         return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
     }
 
+/*
     fun showOldestCard() {
         txvTranslateText.visibility = View.GONE
         txvTranslateText.setBackgroundResource(R.color.slave_color)
@@ -197,4 +201,5 @@ class MainActivity : AppCompatActivity() {
         txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
         txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
     }
+*/
 }

@@ -1,4 +1,4 @@
-package com.skyrylyuk.lexicongain
+package com.skyrylyuk.lexicongain.activity
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
+import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import io.realm.Realm
