@@ -5,16 +5,16 @@ import android.app.Dialog
 import android.app.DialogFragment
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v7.view.ContextThemeWrapper
+import android.view.Gravity
+import android.view.ViewGroup
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
 import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import io.realm.Realm
-import org.jetbrains.anko.UI
-import org.jetbrains.anko.editText
-import org.jetbrains.anko.padding
-import org.jetbrains.anko.verticalLayout
+import org.jetbrains.anko.*
 import retrofit.GsonConverterFactory
 import retrofit.Retrofit
 import retrofit.RxJavaCallAdapterFactory
@@ -63,12 +63,12 @@ class AddDialog : DialogFragment() {
                 val txvOriginal: EditText = editText {
                     hint = "Original text"
                     setText(original)
-                }
+                }.lparams(width = matchParent, height = wrapContent)
+
                 val txvTranslation: EditText = editText {
                     hint = "Translated text"
                     setText(translation)
                 }
-
                 txvOriginal.afterTextChangeEvents()
                         .skip(1)
                         .debounce(650, TimeUnit.MILLISECONDS)
@@ -101,7 +101,7 @@ class AddDialog : DialogFragment() {
             }
         }.view
 
-        val dialog = AlertDialog.Builder(activity)
+        val dialog = AlertDialog.Builder(activity, R.style.AlertDialogCustom)
                 .setView(view)
                 .setPositiveButton("Ok", onPositiveFunction)
                 .setNegativeButton("Cancel", null)
@@ -116,6 +116,13 @@ class AddDialog : DialogFragment() {
         if (arguments.getString(KEY, "").isEmpty()) {
             dialog.window.attributes.windowAnimations = R.style.DialogAnimation_Window
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     override fun onDestroy() {
