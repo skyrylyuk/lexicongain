@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
  *
  * Created by skyrylyuk on 11/11/15.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AnkoLogger {
 
     val SENSITIVE: Int = 10
     val THRESHOLD = 15
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         LexiconGainApplication.graph.inject(this)
 
+//        info("London is the capital of Great Britain")
 
         val mainColor = ContextCompat.getColor(this, R.color.main_color)
         val slaveColor = ContextCompat.getColor(this, R.color.slave_color);
