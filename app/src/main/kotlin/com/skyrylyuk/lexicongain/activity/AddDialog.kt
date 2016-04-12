@@ -5,8 +5,6 @@ import android.app.Dialog
 import android.app.DialogFragment
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v7.view.ContextThemeWrapper
-import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
@@ -133,27 +131,30 @@ class AddDialog : DialogFragment() {
 
     val onPositiveFunction: (DialogInterface, Int) -> Unit = { dialog, which ->
 
-        // All writes must be wrapped in a transaction to facilitate safe multi threading
-        realm.beginTransaction()
+        if (!original.isEmpty()) {
 
-        val key: String = arguments.getString(KEY, "")
+            // All writes must be wrapped in a transaction to facilitate safe multi threading
+            realm.beginTransaction()
 
-        val tokenPair = if (key.isNotEmpty()) {
-            realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
-        } else {
-            TokenPair()
+            val key: String = arguments.getString(KEY, "")
+
+            val tokenPair = if (key.isNotEmpty()) {
+                realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
+            } else {
+                TokenPair()
+            }
+
+
+            tokenPair.apply {
+                originalText = original
+                translateText = translation
+            }
+
+            realm.copyToRealmOrUpdate(tokenPair)
+
+            // When the transaction is committed, all changes a synced to disk.
+            realm.commitTransaction()
         }
-
-
-        tokenPair.apply {
-            originalText = original
-            translateText = translation
-        }
-
-        realm.copyToRealmOrUpdate(tokenPair)
-
-        // When the transaction is committed, all changes a synced to disk.
-        realm.commitTransaction()
     }
 
 
