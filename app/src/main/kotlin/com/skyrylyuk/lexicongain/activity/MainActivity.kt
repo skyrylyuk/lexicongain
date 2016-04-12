@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 imageResource = R.drawable.ic_add_white
                 backgroundResource = R.color.background_material_light
                 onClick {
-                    Snackbar.make(txvOriginalText, "FAB Click", Snackbar.LENGTH_SHORT).show()
+                    AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
                 }
                 backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(Color.CYAN))
             }.lparams{
