@@ -1,10 +1,11 @@
 package com.skyrylyuk.lexicongain.activity
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.*
 import android.view.MotionEvent.*
 import android.view.animation.Animation
@@ -18,6 +19,8 @@ import com.skyrylyuk.lexicongain.view.CollapseAnimation
 import com.skyrylyuk.lexicongain.view.ExpandAnimation
 import io.realm.Realm
 import org.jetbrains.anko.*
+import org.jetbrains.anko.design.coordinatorLayout
+import org.jetbrains.anko.design.floatingActionButton
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -43,83 +46,93 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     val hsvSource = FloatArray(3)
     var shift: Float = 0f
 
-    val TAG = MainActivity::class.java.simpleName
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LexiconGainApplication.graph.inject(this)
 
-//        info("London is the capital of Great Britain")
 
         val mainColor = ContextCompat.getColor(this, R.color.main_color)
         val slaveColor = ContextCompat.getColor(this, R.color.slave_color);
-        verticalLayout {
-            txvOriginalText = textView {
-                backgroundColor = mainColor
-                textColor = Color.BLACK
-                gravity = Gravity.CENTER
-                onClick {
-                    txvTranslateText.visibility = View.VISIBLE
-                    txvTranslateText.startAnimation(ExpandAnimation(txvTranslateText))
-                    txvTranslateText.backgroundColor = slaveColor
-                }
-            }.lparams(width = matchParent, height = 0, weight = 1f)
 
-            txvTranslateText = textView {
-                textColor = Color.BLACK
-                gravity = Gravity.CENTER
-                onTouch { view, motionEvent: MotionEvent ->
-                    val actionMasked = motionEvent.actionMasked
+        coordinatorLayout {
+            verticalLayout {
+                txvOriginalText = textView {
+                    backgroundColor = mainColor
+                    textColor = Color.BLACK
+                    gravity = Gravity.CENTER
+                    onClick {
+                        txvTranslateText.visibility = View.VISIBLE
+                        txvTranslateText.startAnimation(ExpandAnimation(txvTranslateText))
+                        txvTranslateText.backgroundColor = slaveColor
+                    }
+                }.lparams(width = matchParent, height = 0, weight = 1f)
 
-                    when (actionMasked) {
-                        ACTION_DOWN -> {
-                            startX = motionEvent.x
-                        }
-                        ACTION_MOVE -> {
-                            Color.colorToHSV(slaveColor, hsvSource)
+                txvTranslateText = textView {
+                    textColor = Color.BLACK
+                    gravity = Gravity.CENTER
+                    onTouch { view, motionEvent: MotionEvent ->
+                        val actionMasked = motionEvent.actionMasked
 
-                            shift = (startX - motionEvent.x) / SENSITIVE
-                            hsvSource[0] += shift
+                        when (actionMasked) {
+                            ACTION_DOWN -> {
+                                startX = motionEvent.x
+                            }
+                            ACTION_MOVE -> {
+                                Color.colorToHSV(slaveColor, hsvSource)
 
-                            view.setBackgroundColor(Color.HSVToColor(hsvSource))
-                        }
+                                shift = (startX - motionEvent.x) / SENSITIVE
+                                hsvSource[0] += shift
 
-                        ACTION_UP, ACTION_OUTSIDE -> {
-                            when {
-                                shift > THRESHOLD -> {
-                                    markOldestCard(true)
-                                }
-                                shift < -THRESHOLD -> {
-                                    markOldestCard(false)
-                                }
-                                else -> {
-                                    //todo  add default action or implement null operation
-                                    println("default")
-                                }
+                                view.setBackgroundColor(Color.HSVToColor(hsvSource))
                             }
 
-                            val animation = CollapseAnimation(txvTranslateText)
-                            animation.setAnimationListener(object : Animation.AnimationListener {
-                                override fun onAnimationRepeat(animation: Animation?) {
-                                    throw UnsupportedOperationException()
+                            ACTION_UP, ACTION_OUTSIDE -> {
+                                when {
+                                    shift > THRESHOLD -> {
+                                        markOldestCard(true)
+                                    }
+                                    shift < -THRESHOLD -> {
+                                        markOldestCard(false)
+                                    }
+                                    else -> {
+                                        //todo  add default action or implement null operation
+                                        info("default")
+                                    }
                                 }
 
-                                override fun onAnimationEnd(animation: Animation?) {
-                                    irregularVerbPresenter.showOldestCard()
-                                }
+                                val animation = CollapseAnimation(txvTranslateText)
+                                animation.setAnimationListener(object : Animation.AnimationListener {
+                                    override fun onAnimationRepeat(animation: Animation?) {
+                                        throw UnsupportedOperationException()
+                                    }
 
-                                override fun onAnimationStart(animation: Animation?) {
-                                }
-                            })
-                            txvTranslateText.startAnimation(animation)
+                                    override fun onAnimationEnd(animation: Animation?) {
+                                        irregularVerbPresenter.showOldestCard()
+                                    }
+
+                                    override fun onAnimationStart(animation: Animation?) {
+                                    }
+                                })
+                                txvTranslateText.startAnimation(animation)
+                            }
                         }
-                    }
 
-                    true
+                        true
+                    }
+                }.lparams(width = matchParent, height = 0, weight = 1f)
+            }.lparams(width = matchParent, height = matchParent)
+            floatingActionButton {
+                imageResource = R.drawable.ic_add_white
+                backgroundResource = R.color.background_material_light
+                onClick {
+                    Snackbar.make(txvOriginalText, "FAB Click", Snackbar.LENGTH_SHORT).show()
                 }
-            }.lparams(width = matchParent, height = 0, weight = 1f)
+                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(Color.CYAN))
+            }.lparams{
+                gravity = Gravity.BOTTOM or Gravity.RIGHT
+                margin = 10
+            }
         }
 
         irregularVerbPresenter.attachView(txvOriginalText, txvTranslateText)
@@ -192,15 +205,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
     }
 
-/*
-    fun showOldestCard() {
-        txvTranslateText.visibility = View.GONE
-        txvTranslateText.setBackgroundResource(R.color.slave_color)
+    /*
+        fun showOldestCard() {
+            txvTranslateText.visibility = View.GONE
+            txvTranslateText.setBackgroundResource(R.color.slave_color)
 
-        val findFirst = realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
+            val findFirst = realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
 
-        txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
-        txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
-    }
-*/
+            txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
+            txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
+        }
+    */
 }
