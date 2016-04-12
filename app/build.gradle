@@ -5,7 +5,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.github.ben-manes.versions' // Task dependencyUpdates
 
 android {
-    compileSdkVersion 'android-N'
+    compileSdkVersion 23
     buildToolsVersion '23.0.3'
 
     defaultConfig {
@@ -60,8 +60,8 @@ repositories {
 
 dependencies {
     // Android support
-    compile 'com.android.support:design:24.0.0-alpha1'
-    compile 'com.android.support:recyclerview-v7:24.0.0-alpha1'
+    compile 'com.android.support:design:23.3.0'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
