@@ -128,31 +128,22 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }.lparams(width = matchParent, height = matchParent)
             floatingActionButton {
                 imageResource = R.drawable.ic_add_white
-                backgroundResource = R.color.background_material_light
                 onClick {
                     AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
                 }
-                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(Color.CYAN))
+                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(resources.getColor(R.color.fab_color)))
             }.lparams{
                 gravity = Gravity.BOTTOM or Gravity.RIGHT
                 margin = 10
             }
         }
 
+
         irregularVerbPresenter.attachView(txvOriginalText, txvTranslateText)
         // Open the default realm for the UI thread.
         realm = Realm.getDefaultInstance()
 
         irregularVerbPresenter.showOldestCard()
-        /*
-                addButton.setOnClickListener {
-                    println("addButton.setOnClickListener")
-                    AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
-                }
-
-                txvOriginalText.setOnClickListener {
-                }
-        */
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -166,9 +157,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         when (item.itemId) {
             R.id.action_library -> {
                 startActivity<LibraryActivity>()
-            }
-            R.id.action_irregular_verbs -> {
-                //                startActivity<IrregularVerbsActivity>()
             }
         }
 

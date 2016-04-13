@@ -3,22 +3,24 @@ package com.skyrylyuk.lexicongain.activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.util.SparseBooleanArray
 import android.view.*
 import android.widget.AbsListView
 import android.widget.ListView
 import android.widget.TextView
+import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPair
-import io.realm.Realm
+import com.skyrylyuk.lexicongain.model.TokenPairSpecification
 import io.realm.RealmBaseAdapter
 import io.realm.RealmResults
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.onItemClick
 import rx.Observable
 import java.io.File
+import javax.inject.Inject
 
 /**
  *
@@ -26,18 +28,19 @@ import java.io.File
  */
 class LibraryActivity : AppCompatActivity() {
 
-    private val realm: Realm = Realm.getDefaultInstance()
+    @Inject
+    lateinit var repository: TokenPairRepository
 
-    private var realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        LexiconGainApplication.graph.inject(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        realmResults = realm.where(TokenPair::class.java).findAllSorted("updateDate")
 
-        val tokenPairAdapter = TokenPairAdapter(this, realmResults, true)
+        val tokenPairAdapter = TokenPairAdapter(this, repository.query(), true)
 
         listView {
             id = android.R.id.list
@@ -67,21 +70,12 @@ class LibraryActivity : AppCompatActivity() {
                             val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
 
                             // All writes must be wrapped in a transaction to facilitate safe multi threading
-
-
                             Observable.range(0, selectedIds.size())
                                     .filter { selectedIds.valueAt(it) }
                                     .map { tokenPairAdapter.getItem(selectedIds.keyAt(it)) }
                                     .filter { it != null }
                                     .subscribe { tokenPair ->
-                                        realm.beginTransaction()
-                                        realm.where(TokenPair::class.java)
-                                                .equalTo("originalText", tokenPair.originalText)
-                                                .findAll()
-                                                .clear()
-
-                                        // When the transaction is committed, all changes a synced to disk.
-                                        realm.commitTransaction()
+                                        repository.remove(TokenPairSpecification(tokenPair.originalText))
                                     }
 
 
@@ -123,10 +117,10 @@ class LibraryActivity : AppCompatActivity() {
 
         when (item?.itemId) {
             android.R.id.home -> {
-                //                NavUtils.navigateUpFromSameTask(this)
                 finish()
                 return true
             }
+/*
             R.id.action_export -> {
                 val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 val file: File = File(dir, "lexicongain.backup")
@@ -156,15 +150,10 @@ class LibraryActivity : AppCompatActivity() {
                     }
                 }
             }
+*/
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        realm.close()
     }
 
     class TokenPairAdapter(context: Context, realmResults: RealmResults<TokenPair>, automaticUpdate: Boolean) :
@@ -216,8 +205,4 @@ class LibraryActivity : AppCompatActivity() {
             return mSelectedItemsIds;
         }
     }
-
-    //    companion object {
-    //        public val TAG:String = LibraryActivity::class.java.simpleName
-    //    }
 }

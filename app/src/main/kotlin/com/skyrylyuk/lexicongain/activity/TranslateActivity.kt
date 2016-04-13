@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
-import com.skyrylyuk.lexicongain.model.IrregularVerbRepository
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import org.jetbrains.anko.*
@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
 class TranslateActivity : Activity() {
 
     @Inject
-    lateinit var repository: IrregularVerbRepository
+    lateinit var repository: TokenPairRepository
 
     var txvOriginalText: TextView by Delegates.notNull()
     var txvTranslateText: TextView by Delegates.notNull()
@@ -78,8 +78,6 @@ class TranslateActivity : Activity() {
                     }.observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
                         txvTranslateText.text = it
-                        //                                txvTranslate.visibility = View.VISIBLE
-                        //                                prbTranslate.visibility = View.INVISIBLE
                     }
                     .observeOn(Schedulers.immediate())
                     .delay(4, TimeUnit.SECONDS)
@@ -88,16 +86,12 @@ class TranslateActivity : Activity() {
                     }
                     .subscribeOn(Schedulers.io())
                     .subscribe { translation ->
-                        // Open the default realm
-
-
                         val tokenPair = TokenPair().apply {
                             originalText = original
                             translateText = translation
                         }
 
                         repository.add(tokenPair)
-
                     }
         }
 

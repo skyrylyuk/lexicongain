@@ -2,7 +2,7 @@ package com.skyrylyuk.lexicongain
 
 import android.app.Application
 import android.content.Context
-import com.skyrylyuk.lexicongain.model.IrregularVerbRepository
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
 import dagger.Module
 import dagger.Provides
@@ -27,8 +27,8 @@ class AndroidModule(private val context: Application) {
 
     @Provides
     @Singleton
-    fun provideRealm(): IrregularVerbRepository {
-        return IrregularVerbRepository()
+    fun provideRealm(): TokenPairRepository {
+        return TokenPairRepository()
     }
 
     @Provides

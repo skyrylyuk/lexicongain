@@ -7,7 +7,7 @@ import android.view.animation.Animation
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.IrregularVerbRepository
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.view.ExpandAnimation
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.backgroundResource
@@ -24,7 +24,7 @@ class IrregularVerbPresenter {
     lateinit var context: Context
 
     @Inject
-    lateinit var repository: IrregularVerbRepository
+    lateinit var repository: TokenPairRepository
 
     var originalText: TextView? = null
     var translateText: TextView? = null
