@@ -19,7 +19,6 @@ import io.realm.RealmResults
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.onItemClick
 import rx.Observable
-import java.io.File
 import javax.inject.Inject
 
 /**

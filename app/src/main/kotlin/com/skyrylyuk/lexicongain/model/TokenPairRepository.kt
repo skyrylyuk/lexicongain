@@ -37,11 +37,12 @@ class TokenPairRepository {
         return realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
     }
 
-    fun query(): RealmResults<TokenPair> {
+    fun query(specification: RealmSpecification = ListTokenPairSpecification()): RealmResults<TokenPair> {
         val realm: Realm = Realm.getDefaultInstance()
 
-        return  realm.where(TokenPair::class.java).findAllSorted("updateDate")
+        val results = specification.toRealmResults(realm)
 
         realm.close()
+        return results
     }
 }

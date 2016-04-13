@@ -8,13 +8,12 @@ import io.realm.RealmResults
  * Created by skyryl on 13.04.16.
  */
 
-class TokenPairSpecification(val originalText: String = ""): RealmSpecification {
+class ListTokenPairSpecification(): RealmSpecification {
 
     override fun toRealmResults(realm: Realm): RealmResults<TokenPair> {
 
         return realm.where(TokenPair::class.java)
-                .equalTo("originalText", originalText)
-                .findAll()
+                .findAllSorted("updateDate")
     }
 
 }
