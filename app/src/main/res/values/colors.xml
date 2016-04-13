@@ -6,4 +6,6 @@
     <color name="correct_color">#4CAF50</color>
     <color name="wrong_color">#F44336</color>
 
+    <color name="fab_color">#7c4dff</color>
+
 </resources>
