@@ -1,11 +1,16 @@
 package com.skyrylyuk.lexicongain.presenter
 
 import android.content.Context
+import android.support.v4.content.ContextCompat
 import android.view.View
+import android.view.animation.Animation
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.IrregularVerbRepository
+import com.skyrylyuk.lexicongain.view.ExpandAnimation
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundResource
 import javax.inject.Inject
 
 /**
@@ -36,6 +41,15 @@ class IrregularVerbPresenter {
     fun detachView() {
         originalText = null
         translateText = null
+    }
+
+    fun showTranslation(){
+        translateText?.visibility = View.VISIBLE
+
+        translateText?.startAnimation(ExpandAnimation(translateText as TextView))
+
+        val slaveColor = ContextCompat.getColor(context, R.color.slave_color);
+        translateText?.backgroundColor = slaveColor
     }
 
     fun showOldestCard() {

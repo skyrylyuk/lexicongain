@@ -1,7 +1,6 @@
 package com.skyrylyuk.lexicongain.model
 
 import io.realm.Realm
-import kotlin.properties.Delegates
 
 /**
  * Person project
@@ -9,17 +8,17 @@ import kotlin.properties.Delegates
  */
 class IrregularVerbRepository {
 
-    var realm: Realm by Delegates.notNull()
 
-    init {
-        realm = Realm.getDefaultInstance()
+    fun add(tokenPair: TokenPair) {
+        val realm = Realm.getDefaultInstance()
+
+        realm.executeTransaction {
+            realm.copyToRealmOrUpdate(tokenPair)
+        }
     }
 
-    fun getCount(): Long {
-        return realm.where(TokenPair::class.java).count()
-    }
-
-    fun getNextCard():TokenPair? {
+    fun getNextCard(): TokenPair? {
+        val realm = Realm.getDefaultInstance()
         return realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
     }
 }

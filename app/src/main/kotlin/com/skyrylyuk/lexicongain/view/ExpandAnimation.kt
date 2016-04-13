@@ -5,6 +5,7 @@ import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Transformation
 import android.widget.LinearLayout
+import com.skyrylyuk.lexicongain.R
 import kotlin.properties.Delegates
 
 /**
@@ -25,6 +26,7 @@ class ExpandAnimation(internal val view: View) : Animation() {
         super.initialize(width, height, parentWidth, parentHeight)
 
         lp = view.layoutParams as LinearLayout.LayoutParams
+        lp.weight = .0f
     }
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {

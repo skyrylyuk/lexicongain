@@ -3,10 +3,10 @@ package com.skyrylyuk.lexicongain.activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.*
+import android.view.View.*
 import android.view.MotionEvent.*
 import android.view.animation.Animation
 import android.widget.TextView
@@ -16,7 +16,6 @@ import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
 import com.skyrylyuk.lexicongain.util.plus
 import com.skyrylyuk.lexicongain.view.CollapseAnimation
-import com.skyrylyuk.lexicongain.view.ExpandAnimation
 import io.realm.Realm
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
@@ -62,9 +61,14 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     textColor = Color.BLACK
                     gravity = Gravity.CENTER
                     onClick {
-                        txvTranslateText.visibility = View.VISIBLE
-                        txvTranslateText.startAnimation(ExpandAnimation(txvTranslateText))
-                        txvTranslateText.backgroundColor = slaveColor
+                        when (txvTranslateText.visibility) {
+                            VISIBLE -> {
+                                irregularVerbPresenter.showOldestCard()
+                            }
+                            GONE -> {
+                                irregularVerbPresenter.showTranslation()
+                            }
+                        }
                     }
                 }.lparams(width = matchParent, height = 0, weight = 1f)
 
@@ -174,6 +178,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onDestroy() {
         super.onDestroy()
 
+        irregularVerbPresenter.detachView()
         realm.close()
     }
 
