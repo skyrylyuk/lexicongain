@@ -1,5 +1,6 @@
 package com.skyrylyuk.lexicongain.view
 
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
@@ -26,12 +27,11 @@ class ExpandAnimation(internal val view: View) : Animation() {
         super.initialize(width, height, parentWidth, parentHeight)
 
         lp = view.layoutParams as LinearLayout.LayoutParams
-        lp.weight = .0f
     }
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
         lp.weight = interpolatedTime
-        view.layoutParams = lp;
+        view.layoutParams = lp
     }
 
 }

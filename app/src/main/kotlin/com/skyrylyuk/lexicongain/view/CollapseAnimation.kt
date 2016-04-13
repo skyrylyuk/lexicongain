@@ -5,6 +5,7 @@ import android.view.animation.Animation
 import android.view.animation.AnticipateInterpolator
 import android.view.animation.Transformation
 import android.widget.LinearLayout
+import kotlin.properties.Delegates
 
 /**
  * Person project
@@ -12,7 +13,7 @@ import android.widget.LinearLayout
  */
 class CollapseAnimation(internal val view: View) : Animation() {
 
-    var lp: LinearLayout.LayoutParams? = null
+    var lp: LinearLayout.LayoutParams by Delegates.notNull()
 
     init {
         duration = view.context.resources.getInteger(android.R.integer.config_mediumAnimTime).toLong()
@@ -27,7 +28,7 @@ class CollapseAnimation(internal val view: View) : Animation() {
     }
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
-        lp?.weight = 1 - interpolatedTime
-        view.layoutParams = lp;
+        lp.weight = 1.00001f - interpolatedTime
+        view.layoutParams = lp
     }
 }

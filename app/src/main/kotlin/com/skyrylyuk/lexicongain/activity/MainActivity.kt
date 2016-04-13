@@ -5,17 +5,18 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
-import android.view.*
-import android.view.View.*
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.MotionEvent.*
-import android.view.animation.Animation
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
-import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
+import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.plus
-import com.skyrylyuk.lexicongain.view.CollapseAnimation
 import io.realm.Realm
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     val THRESHOLD = 15
 
     @Inject
-    lateinit var irregularVerbPresenter: IrregularVerbPresenter
+    lateinit var presenter: TokenPairPresenter
 
     var realm: Realm by Delegates.notNull()
 
@@ -61,13 +62,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     textColor = Color.BLACK
                     gravity = Gravity.CENTER
                     onClick {
-                        when (txvTranslateText.visibility) {
-                            VISIBLE -> {
-                                irregularVerbPresenter.showOldestCard()
-                            }
-                            GONE -> {
-                                irregularVerbPresenter.showTranslation()
-                            }
+                        var lp = txvTranslateText.layoutParams as LinearLayout.LayoutParams
+
+                        if(lp.weight == 1.0f){
+                            presenter.showNextCard()
+                        } else {
+
+                            presenter.showTranslation()
                         }
                     }
                 }.lparams(width = matchParent, height = 0, weight = 1f)
@@ -105,20 +106,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                                     }
                                 }
 
-                                val animation = CollapseAnimation(txvTranslateText)
-                                animation.setAnimationListener(object : Animation.AnimationListener {
-                                    override fun onAnimationRepeat(animation: Animation?) {
-                                        throw UnsupportedOperationException()
-                                    }
-
-                                    override fun onAnimationEnd(animation: Animation?) {
-                                        irregularVerbPresenter.showOldestCard()
-                                    }
-
-                                    override fun onAnimationStart(animation: Animation?) {
-                                    }
-                                })
-                                txvTranslateText.startAnimation(animation)
+                                presenter.showNextCard()
                             }
                         }
 
@@ -139,11 +127,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
 
-        irregularVerbPresenter.attachView(txvOriginalText, txvTranslateText)
+        presenter.attachView(txvOriginalText, txvTranslateText)
         // Open the default realm for the UI thread.
         realm = Realm.getDefaultInstance()
 
-        irregularVerbPresenter.showOldestCard()
+        presenter.showNextCard()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -166,7 +154,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onDestroy() {
         super.onDestroy()
 
-        irregularVerbPresenter.detachView()
+        presenter.detachView()
         realm.close()
     }
 
@@ -197,16 +185,4 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
     }
-
-    /*
-        fun showOldestCard() {
-            txvTranslateText.visibility = View.GONE
-            txvTranslateText.setBackgroundResource(R.color.slave_color)
-
-            val findFirst = realm.where(TokenPair::class.java).findAllSorted("updateDate").firstOrNull()
-
-            txvOriginalText.text = findFirst?.originalText ?: getString(R.string.original_text)
-            txvTranslateText.text = findFirst?.translateText ?: getString(R.string.translate_text)
-        }
-    */
 }

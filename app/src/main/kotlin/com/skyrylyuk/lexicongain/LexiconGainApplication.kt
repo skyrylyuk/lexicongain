@@ -3,7 +3,7 @@ package com.skyrylyuk.lexicongain
 import android.app.Application
 import com.skyrylyuk.lexicongain.model.DBModule
 import com.skyrylyuk.lexicongain.model.IrregularVerb
-import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
+import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import javax.inject.Inject

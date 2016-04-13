@@ -3,7 +3,7 @@ package com.skyrylyuk.lexicongain
 import android.app.Application
 import android.content.Context
 import com.skyrylyuk.lexicongain.model.TokenPairRepository
-import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
+import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm
@@ -33,7 +33,7 @@ class AndroidModule(private val context: Application) {
 
     @Provides
     @Singleton
-    fun provideIrregularVerbPresenter(): IrregularVerbPresenter {
-        return IrregularVerbPresenter()
+    fun provideIrregularVerbPresenter(): TokenPairPresenter {
+        return TokenPairPresenter()
     }
 }

@@ -3,7 +3,7 @@ package com.skyrylyuk.lexicongain
 import com.skyrylyuk.lexicongain.activity.LibraryActivity
 import com.skyrylyuk.lexicongain.activity.MainActivity
 import com.skyrylyuk.lexicongain.activity.TranslateActivity
-import com.skyrylyuk.lexicongain.presenter.IrregularVerbPresenter
+import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import dagger.Component
 import javax.inject.Singleton
 
@@ -24,5 +24,5 @@ interface  ApplicationComponent {
 
     fun inject(library: LibraryActivity)
 
-    fun inject(irregularVerbPresenter: IrregularVerbPresenter)
+    fun inject(tokenPairPresenter: TokenPairPresenter)
 }
