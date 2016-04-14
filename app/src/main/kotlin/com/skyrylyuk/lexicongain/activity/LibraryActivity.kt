@@ -117,6 +117,7 @@ class LibraryActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 finish()
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
                 return true
             }
 /*
@@ -153,6 +154,11 @@ class LibraryActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
     class TokenPairAdapter(context: Context, realmResults: RealmResults<TokenPair>, automaticUpdate: Boolean) :

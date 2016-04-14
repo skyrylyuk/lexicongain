@@ -137,6 +137,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         when (item.itemId) {
             R.id.action_library -> {
                 startActivity<LibraryActivity>()
+                overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out);
             }
         }
 
@@ -148,6 +149,4 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         presenter.detachView()
     }
-
-
 }
