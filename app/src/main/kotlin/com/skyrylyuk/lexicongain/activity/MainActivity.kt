@@ -14,14 +14,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
-import com.skyrylyuk.lexicongain.util.plus
-import io.realm.Realm
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.floatingActionButton
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -36,8 +32,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     @Inject
     lateinit var presenter: TokenPairPresenter
-
-    var realm: Realm by Delegates.notNull()
 
     var txvOriginalText: TextView by Delegates.notNull()
     var txvTranslateText: TextView by Delegates.notNull()
@@ -95,10 +89,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                             ACTION_UP, ACTION_OUTSIDE -> {
                                 when {
                                     shift > THRESHOLD -> {
-                                        markOldestCard(true)
+                                        presenter.markOldestCard(true)
                                     }
                                     shift < -THRESHOLD -> {
-                                        markOldestCard(false)
+                                        presenter.markOldestCard(false)
                                     }
                                     else -> {
                                         //todo  add default action or implement null operation
@@ -128,8 +122,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
 
         presenter.attachView(txvOriginalText, txvTranslateText)
-        // Open the default realm for the UI thread.
-        realm = Realm.getDefaultInstance()
 
         presenter.showNextCard()
     }
@@ -155,34 +147,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         super.onDestroy()
 
         presenter.detachView()
-        realm.close()
     }
 
-    fun markOldestCard(date: Boolean) {
 
-        if (realm.where(TokenPair::class.java).count() > 0) {
-
-            val tokenPair = realm.where(TokenPair::class.java).findAllSorted("updateDate").first()
-
-            realm.executeTransaction {
-                realm.copyToRealmOrUpdate(tokenPair.apply {
-
-                    if (date) {
-                        phase++
-                    }
-
-                    updateDate += getPhaseDuration(phase)
-                })
-            }
-        }
-    }
-
-    fun getPhaseDuration(phase: Int): Long {
-        val sqrt5 = Math.sqrt(5.0)
-        val phi = (sqrt5 + 1) / 2
-
-        Math.floor(Math.pow(phi, phase.toDouble()) / sqrt5 + 0.5).toInt()
-
-        return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
-    }
 }

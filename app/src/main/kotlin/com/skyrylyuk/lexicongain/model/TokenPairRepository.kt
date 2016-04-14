@@ -43,6 +43,17 @@ class TokenPairRepository {
         val results = specification.toRealmResults(realm)
 
         realm.close()
+
         return results
+    }
+
+    fun queryCopyFromRealm(specification: RealmSpecification = ListTokenPairSpecification()): List<TokenPair> {
+        val realm: Realm = Realm.getDefaultInstance()
+
+        val results = specification.toRealmResults(realm)
+
+        realm.close()
+
+        return realm.copyFromRealm(results)
     }
 }

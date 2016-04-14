@@ -6,10 +6,15 @@ import android.view.animation.Animation
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
+import com.skyrylyuk.lexicongain.model.ListTokenPairSpecification
 import com.skyrylyuk.lexicongain.model.TokenPairRepository
+import com.skyrylyuk.lexicongain.util.plus
 import com.skyrylyuk.lexicongain.view.CollapseAnimation
 import com.skyrylyuk.lexicongain.view.ExpandAnimation
+import org.jetbrains.anko.backgroundColor
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 /**
  * Person project
@@ -45,7 +50,7 @@ class TokenPairPresenter {
     }
 
     fun showNextCard() {
-        translateText?.setBackgroundResource(R.color.slave_color)
+        translateText?.backgroundColor = slaveColor
         val animation = CollapseAnimation(translateText!!)
         animation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationRepeat(animation: Animation?) {
@@ -65,10 +70,36 @@ class TokenPairPresenter {
         translateText?.startAnimation(animation)
 
 
-
     }
 
     fun showTranslation() {
         translateText?.startAnimation(ExpandAnimation(translateText as TextView))
+    }
+
+    fun markOldestCard(date: Boolean) {
+
+        val tokenPair = repository.queryCopyFromRealm(ListTokenPairSpecification()).firstOrNull()
+        if (tokenPair != null) {
+
+            tokenPair.apply {
+
+                if (date) {
+                    phase++
+                }
+
+                updateDate += getPhaseDuration(phase)
+            }
+
+            repository.add(tokenPair)
+        }
+    }
+
+    fun getPhaseDuration(phase: Int): Long {
+        val sqrt5 = Math.sqrt(5.0)
+        val phi = (sqrt5 + 1) / 2
+
+        Math.floor(Math.pow(phi, phase.toDouble()) / sqrt5 + 0.5).toInt()
+
+        return TimeUnit.MILLISECONDS.convert(if (phase != 0) phase.toLong() else 1, TimeUnit.DAYS)
     }
 }
