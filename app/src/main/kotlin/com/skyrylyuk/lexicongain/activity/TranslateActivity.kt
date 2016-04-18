@@ -1,5 +1,6 @@
 package com.skyrylyuk.lexicongain.activity
 
+import android.animation.LayoutTransition
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -10,13 +11,10 @@ import android.view.View
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import org.jetbrains.anko.*
-import retrofit.GsonConverterFactory
-import retrofit.Retrofit
-import retrofit.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
@@ -61,6 +59,7 @@ class TranslateActivity : Activity() {
                 padding = 10
                 visibility = View.INVISIBLE
             }.lparams(width = matchParent, height = wrapContent)
+            layoutTransition = LayoutTransition()
         }
 
         if (intent.action == Intent.ACTION_SEND) {
