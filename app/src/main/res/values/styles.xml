@@ -15,7 +15,7 @@
              which is used to tint widgets -->
         <item name="colorAccent">#FFAB40</item>
 
-        <item name="android:actionModeCloseDrawable">@drawable/ic_done</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_done</item>
     </style>
 
     <style name="Theme.Transparent" parent="@android:style/Theme">
