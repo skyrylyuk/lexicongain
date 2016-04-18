@@ -13,12 +13,10 @@ import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import io.realm.Realm
 import org.jetbrains.anko.*
-import retrofit.GsonConverterFactory
-import retrofit.Retrofit
-import retrofit.RxJavaCallAdapterFactory
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 /**
@@ -30,13 +28,15 @@ class AddDialog : DialogFragment() {
     // Open the default realm
     var realm = Realm.getDefaultInstance()
 
+    @Inject
+    lateinit var service: YandexTranslate
+
 
     var original: String = ""
     var translation: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
 
-        println("override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {")
 
         val key: String = arguments.getString(KEY, "")
 
@@ -46,14 +46,6 @@ class AddDialog : DialogFragment() {
             translation = tokenPair.translateText
         }
 
-
-        var restAdapter = Retrofit.Builder()
-                .baseUrl(YandexTranslate.HOST)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build()
-
-        val service = restAdapter.create(YandexTranslate::class.java)
 
         val view = UI {
             verticalLayout {
@@ -120,7 +112,7 @@ class AddDialog : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     override fun onDestroy() {

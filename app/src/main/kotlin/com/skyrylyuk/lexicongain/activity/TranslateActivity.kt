@@ -6,8 +6,10 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
+import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
@@ -30,6 +32,9 @@ class TranslateActivity : Activity() {
 
     @Inject
     lateinit var repository: TokenPairRepository
+
+    @Inject
+    lateinit var service: YandexTranslate
 
     var txvOriginalText: TextView by Delegates.notNull()
     var txvTranslateText: TextView by Delegates.notNull()
@@ -54,6 +59,7 @@ class TranslateActivity : Activity() {
                 textColor = Color.WHITE
                 gravity = Gravity.CENTER_HORIZONTAL
                 padding = 10
+                visibility = View.INVISIBLE
             }.lparams(width = matchParent, height = wrapContent)
         }
 
@@ -62,15 +68,6 @@ class TranslateActivity : Activity() {
             txvOriginalText.text = original
             txvTranslateText.text = original
 
-
-            var restAdapter = Retrofit.Builder()
-                    .baseUrl(YandexTranslate.HOST)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .build()
-
-            val service = restAdapter.create(YandexTranslate::class.java)
-
             service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
                     .observeOn(Schedulers.computation())
                     .map { response ->
@@ -78,11 +75,13 @@ class TranslateActivity : Activity() {
                     }.observeOn(AndroidSchedulers.mainThread())
                     .doOnNext {
                         txvTranslateText.text = it
+                        txvTranslateText.visibility = View.VISIBLE
                     }
                     .observeOn(Schedulers.immediate())
                     .delay(4, TimeUnit.SECONDS)
                     .doOnNext {
                         finish()
+                        overridePendingTransition(R.anim.anim_empty, R.anim.anim_out_up)
                     }
                     .subscribeOn(Schedulers.io())
                     .subscribe { translation ->
