@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
+import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
+import com.skyrylyuk.lexicongain.model.ListTokenPairSpecification
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.util.YandexTranslate
-import io.realm.Realm
 import org.jetbrains.anko.*
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -25,8 +27,8 @@ import javax.inject.Inject
  */
 class AddDialog : DialogFragment() {
 
-    // Open the default realm
-    var realm = Realm.getDefaultInstance()
+    @Inject
+    lateinit var repository: TokenPairRepository
 
     @Inject
     lateinit var service: YandexTranslate
@@ -36,15 +38,16 @@ class AddDialog : DialogFragment() {
     var translation: String = ""
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog? {
-
+        LexiconGainApplication.graph.inject(this)
 
         val key: String = arguments.getString(KEY, "")
 
         if (key.isNotEmpty()) {
-            val tokenPair = realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
+            val tokenPair = repository.query(ListTokenPairSpecification(key)).first()
             original = tokenPair.originalText
             translation = tokenPair.translateText
         }
+
 
 
         val view = UI {
@@ -115,37 +118,24 @@ class AddDialog : DialogFragment() {
         dialog.window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        realm.close()
-    }
-
     val onPositiveFunction: (DialogInterface, Int) -> Unit = { dialog, which ->
 
         if (!original.isEmpty()) {
 
-            // All writes must be wrapped in a transaction to facilitate safe multi threading
-            realm.beginTransaction()
-
             val key: String = arguments.getString(KEY, "")
 
             val tokenPair = if (key.isNotEmpty()) {
-                realm.where(TokenPair::class.java).equalTo("originalText", key).findFirst()
+                repository.query(ListTokenPairSpecification(key)).first()
             } else {
                 TokenPair()
             }
-
 
             tokenPair.apply {
                 originalText = original
                 translateText = translation
             }
 
-            realm.copyToRealmOrUpdate(tokenPair)
-
-            // When the transaction is committed, all changes a synced to disk.
-            realm.commitTransaction()
+            repository.add(tokenPair)
         }
     }
 
