@@ -96,17 +96,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                                     }
                                     else -> {
                                         //todo  add default action or implement null operation
-                                        info("default")
+                                        txvTranslateText.backgroundColor = slaveColor
                                     }
                                 }
 
-                                presenter.showNextCard()
+//                                presenter.showNextCard()
                             }
                         }
 
                         true
                     }
-                }.lparams(width = matchParent, height = 0, weight = 1f)
+                }.lparams(width = matchParent, height = 0, weight = .00001f)
             }.lparams(width = matchParent, height = matchParent)
             floatingActionButton {
                 imageResource = R.drawable.ic_add_white

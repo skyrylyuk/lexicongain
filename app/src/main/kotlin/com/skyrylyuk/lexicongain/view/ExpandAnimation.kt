@@ -29,6 +29,7 @@ class ExpandAnimation(internal val view: View) : Animation() {
         lp = view.layoutParams as LinearLayout.LayoutParams
     }
 
+
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
         lp.weight = interpolatedTime
         view.layoutParams = lp

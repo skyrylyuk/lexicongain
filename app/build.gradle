@@ -52,9 +52,8 @@ kapt {
 
 repositories {
     jcenter()
-    mavenCentral()
     maven {
-        url 'http://oss.jfrog.org/artifactory/oss-snapshot-local'
+        url 'https://dl.bintray.com/kotlin/kotlin-eap'
     }
 }
 
@@ -90,7 +89,8 @@ dependencies {
 }
 
 buildscript {
-    ext.kotlin_version = '1.0.1-2'
+//    ext.kotlin_version = '1.0.1-2'
+    ext.kotlin_version = '1.0.2-eap-44'
     ext.anko_version = '0.8.3'
 
     ext.realm_version = '0.87.5'
@@ -100,6 +100,9 @@ buildscript {
 
     repositories {
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/kotlin/kotlin-eap'
+        }
     }
 
     dependencies {

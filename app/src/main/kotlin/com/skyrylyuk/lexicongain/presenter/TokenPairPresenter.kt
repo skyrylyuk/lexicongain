@@ -92,6 +92,8 @@ class TokenPairPresenter {
 
             repository.add(tokenPair)
         }
+
+        showNextCard()
     }
 
     fun getPhaseDuration(phase: Int): Long {

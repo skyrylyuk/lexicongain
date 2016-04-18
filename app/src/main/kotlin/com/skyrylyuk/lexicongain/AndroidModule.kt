@@ -4,10 +4,14 @@ import android.app.Application
 import android.content.Context
 import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
+import com.skyrylyuk.lexicongain.util.YandexTranslate
 import dagger.Module
 import dagger.Provides
 import io.realm.Realm
 import org.jetbrains.annotations.NotNull
+import retrofit.GsonConverterFactory
+import retrofit.Retrofit
+import retrofit.RxJavaCallAdapterFactory
 import javax.inject.Singleton
 
 /**
@@ -29,6 +33,19 @@ class AndroidModule(private val context: Application) {
     @Singleton
     fun provideRealm(): TokenPairRepository {
         return TokenPairRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideService(): YandexTranslate {
+        var restAdapter = Retrofit.Builder()
+                .baseUrl(YandexTranslate.HOST)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build()
+
+        val service = restAdapter.create(YandexTranslate::class.java)
+        return service
     }
 
     @Provides
