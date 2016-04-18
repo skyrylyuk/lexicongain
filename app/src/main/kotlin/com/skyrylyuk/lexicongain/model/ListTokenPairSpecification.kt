@@ -8,11 +8,17 @@ import io.realm.RealmResults
  * Created by skyryl on 13.04.16.
  */
 
-class ListTokenPairSpecification(): RealmSpecification {
+class ListTokenPairSpecification(val originalText: String = "") : RealmSpecification {
 
     override fun toRealmResults(realm: Realm): RealmResults<TokenPair> {
 
-        return realm.where(TokenPair::class.java)
+        val realmQuery = realm.where(TokenPair::class.java)
+
+        if (originalText.isNotEmpty()) {
+            realmQuery
+        }
+
+        return realmQuery
                 .findAllSorted("updateDate")
     }
 

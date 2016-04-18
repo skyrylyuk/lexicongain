@@ -1,5 +1,6 @@
 package com.skyrylyuk.lexicongain
 
+import com.skyrylyuk.lexicongain.activity.AddDialog
 import com.skyrylyuk.lexicongain.activity.LibraryActivity
 import com.skyrylyuk.lexicongain.activity.MainActivity
 import com.skyrylyuk.lexicongain.activity.TranslateActivity
@@ -21,6 +22,8 @@ interface  ApplicationComponent {
     fun inject(main: MainActivity)
 
     fun inject(translate: TranslateActivity)
+
+    fun inject(translate: AddDialog)
 
     fun inject(library: LibraryActivity)
 
