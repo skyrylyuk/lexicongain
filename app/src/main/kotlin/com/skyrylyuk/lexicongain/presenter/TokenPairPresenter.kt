@@ -69,10 +69,10 @@ class TokenPairPresenter {
         })
         translateText?.startAnimation(animation)
 
-
     }
 
     fun showTranslation() {
+        translateText?.requestLayout()
         translateText?.startAnimation(ExpandAnimation(translateText as TextView))
     }
 

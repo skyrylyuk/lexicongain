@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 txvOriginalText = textView {
                     backgroundColor = mainColor
                     textColor = Color.BLACK
+                    textSize = resources.getDimension(R.dimen.main_activity_font_size)
                     gravity = Gravity.CENTER
                     onClick {
                         var lp = txvTranslateText.layoutParams as LinearLayout.LayoutParams
@@ -61,7 +62,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                         if(lp.weight == 1.0f){
                             presenter.showNextCard()
                         } else {
-
                             presenter.showTranslation()
                         }
                     }
@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
                 txvTranslateText = textView {
                     textColor = Color.BLACK
+                    textSize = resources.getDimension(R.dimen.main_activity_font_size)
                     gravity = Gravity.CENTER
                     onTouch { view, motionEvent: MotionEvent ->
                         val actionMasked = motionEvent.actionMasked
@@ -99,8 +100,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                                         txvTranslateText.backgroundColor = slaveColor
                                     }
                                 }
-
-//                                presenter.showNextCard()
                             }
                         }
 
