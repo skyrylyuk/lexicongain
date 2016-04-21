@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
                         true
                     }
-                }.lparams(width = matchParent, height = 0, weight = .00001f)
+                }.lparams(width = matchParent, height = 0, weight = 0f)
             }.lparams(width = matchParent, height = matchParent)
             floatingActionButton {
                 imageResource = R.drawable.ic_add_white
