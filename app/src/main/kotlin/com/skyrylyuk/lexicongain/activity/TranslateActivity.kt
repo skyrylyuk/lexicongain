@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
@@ -76,11 +77,14 @@ class TranslateActivity : Activity() {
                         txvTranslateText.text = it
                         txvTranslateText.visibility = View.VISIBLE
                     }
-                    .observeOn(Schedulers.immediate())
+                    .observeOn(Schedulers.computation())
                     .delay(4, TimeUnit.SECONDS)
                     .doOnNext {
-                        finish()
-                        overridePendingTransition(R.anim.anim_empty, R.anim.anim_out_up)
+                        h.post({
+                            finish()
+                            //TODO fix slide up out animation R.anim.anim_out_up
+                            this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
+                        })
                     }
                     .subscribeOn(Schedulers.io())
                     .subscribe { translation ->
@@ -94,4 +98,6 @@ class TranslateActivity : Activity() {
         }
 
     }
+
+    val h: Handler = Handler()
 }
