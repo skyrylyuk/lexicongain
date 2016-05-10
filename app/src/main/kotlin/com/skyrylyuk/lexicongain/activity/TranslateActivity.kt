@@ -26,7 +26,7 @@ import kotlin.properties.Delegates
  * Created by skyrylyuk on 11/11/15.
  */
 
-class TranslateActivity : Activity() {
+class TranslateActivity : Activity(), AnkoLogger {
 
     @Inject
     lateinit var repository: TokenPairRepository
@@ -69,7 +69,23 @@ class TranslateActivity : Activity() {
 
             val mainThread = AndroidSchedulers.mainThread()
 
-            service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
+            service.detect(text = original)
+                    .observeOn(Schedulers.computation())
+                    .map { response ->
+                        info { "*****************************************************************" }
+                        info { "${response.toString()}" }
+                        info { "*****************************************************************" }
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .subscribe { it ->
+                        info { "*****************************************************************" }
+                        info { "${it.toString()}" }
+                        info { "*****************************************************************" }
+                    }
+
+
+
+            service.translate(text = original)
                     .observeOn(Schedulers.computation())
                     .map { response ->
                         response.get(YandexTranslate.TEXT).asString
@@ -78,12 +94,15 @@ class TranslateActivity : Activity() {
                         txvTranslateText.text = it
                         txvTranslateText.visibility = View.VISIBLE
                     }
+                    .doOnError { it ->
+                        txvTranslateText.text = it.message
+                    }
                     .delay(4, TimeUnit.SECONDS)
                     .observeOn(mainThread)
                     .doOnNext {
-                            finish()
-                            //TODO fix slide up out animation R.anim.anim_out_up
-                            this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
+                        finish()
+                        //TODO fix slide up out animation R.anim.anim_out_up
+                        this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
                     }
                     .subscribeOn(Schedulers.io())
                     .subscribe { translation ->

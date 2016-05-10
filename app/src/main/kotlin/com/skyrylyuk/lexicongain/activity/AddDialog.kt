@@ -67,7 +67,7 @@ class AddDialog : DialogFragment() {
                         .debounce(650, TimeUnit.MILLISECONDS)
                         .doOnNext {
                             original = it.editable().toString()
-                            service.translate(YandexTranslate.API_KEY, YandexTranslate.LANG, original)
+                            service.translate(YandexTranslate.API_KEY_TRNSL, YandexTranslate.LANG, original)
                                     .map({ response -> response.get(YandexTranslate.TEXT).asString })
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .doOnError {
