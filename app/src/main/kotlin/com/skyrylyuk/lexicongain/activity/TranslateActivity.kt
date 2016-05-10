@@ -70,23 +70,14 @@ class TranslateActivity : Activity(), AnkoLogger {
             val mainThread = AndroidSchedulers.mainThread()
 
             service.detect(text = original)
+                    .subscribeOn(Schedulers.newThread())
                     .observeOn(Schedulers.computation())
                     .map { response ->
-                        info { "*****************************************************************" }
-                        info { "${response.toString()}" }
-                        info { "*****************************************************************" }
+                        response?.get("lang")?.asString
                     }
-                    .subscribeOn(Schedulers.io())
-                    .subscribe { it ->
-                        info { "*****************************************************************" }
-                        info { "${it.toString()}" }
-                        info { "*****************************************************************" }
+                    .flatMap { originalLang ->
+                        service.translate(lang = "$originalLang-uk", text = original)
                     }
-
-
-
-            service.translate(text = original)
-                    .observeOn(Schedulers.computation())
                     .map { response ->
                         response.get(YandexTranslate.TEXT).asString
                     }.observeOn(mainThread)
@@ -100,20 +91,31 @@ class TranslateActivity : Activity(), AnkoLogger {
                     .delay(4, TimeUnit.SECONDS)
                     .observeOn(mainThread)
                     .doOnNext {
+                        txvTranslateText.visibility = View.GONE
                         finish()
                         //TODO fix slide up out animation R.anim.anim_out_up
                         this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
                     }
-                    .subscribeOn(Schedulers.io())
-                    .subscribe { translation ->
+                    //                    .observeOn(mainThread)
+                    .subscribe({ translation ->
                         val tokenPair = TokenPair().apply {
                             originalText = original
                             translateText = translation
                         }
 
                         repository.add(tokenPair)
-                    }
+                    }, errorHandler)
         }
 
+    }
+
+    val errorHandler = fun(throwable: Throwable) {
+
+        error { " Request to server finish with error: ${throwable.message} " }
+
+        //  txvTranslateText.visibility = View.GONE
+        finish()
+        //TODO fix slide up out animation R.anim.anim_out_up
+        overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
     }
 }
