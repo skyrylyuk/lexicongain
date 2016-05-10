@@ -28,7 +28,7 @@ class CollapseAnimation(internal val view: View) : Animation() {
     }
 
     override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
-        lp.weight = 1.0f - interpolatedTime
+        lp.weight = 1.001f - interpolatedTime
         view.layoutParams = lp
     }
 }

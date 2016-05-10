@@ -74,6 +74,7 @@ class TokenPairPresenter {
     fun showTranslation() {
         translateText?.startAnimation(ExpandAnimation(translateText as TextView))
         translateText?.requestLayout()
+        translateText?.requestLayout()
     }
 
     fun markOldestCard(date: Boolean) {
