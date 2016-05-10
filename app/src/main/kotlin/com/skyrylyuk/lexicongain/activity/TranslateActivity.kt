@@ -60,6 +60,9 @@ class TranslateActivity : Activity(), AnkoLogger {
                 visibility = View.INVISIBLE
             }.lparams(width = matchParent, height = wrapContent)
             layoutTransition = LayoutTransition()
+            onClick {
+                finish()
+            }
         }
 
         if (intent.action == Intent.ACTION_SEND) {
@@ -85,32 +88,28 @@ class TranslateActivity : Activity(), AnkoLogger {
                         txvTranslateText.text = it
                         txvTranslateText.visibility = View.VISIBLE
                     }
-                    .doOnError { it ->
-                        txvTranslateText.text = it.message
-                    }
-                    .delay(4, TimeUnit.SECONDS)
-                    .observeOn(mainThread)
-                    .doOnNext {
-                        txvTranslateText.visibility = View.GONE
-                        finish()
-                        //TODO fix slide up out animation R.anim.anim_out_up
-                        this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
-                    }
-                    //                    .observeOn(mainThread)
-                    .subscribe({ translation ->
+                    .doOnNext { translation ->
                         val tokenPair = TokenPair().apply {
                             originalText = original
                             translateText = translation
                         }
 
                         repository.add(tokenPair)
+                    }
+                    .delay(4, TimeUnit.SECONDS)
+                    .observeOn(mainThread)
+                    .subscribe({
+                        txvTranslateText.visibility = View.GONE
+                        finish()
+                        //TODO fix slide up out animation R.anim.anim_out_up
+                        this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
                     }, errorHandler)
         }
 
     }
 
     val errorHandler = fun(throwable: Throwable) {
-
+        txvOriginalText.text = "WTF"
         error { " Request to server finish with error: ${throwable.message} " }
 
         //  txvTranslateText.visibility = View.GONE

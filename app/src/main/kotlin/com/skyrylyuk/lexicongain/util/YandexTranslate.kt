@@ -11,7 +11,7 @@ import rx.Observable
  */
 interface YandexTranslate {
 
-    @GET("/api/v7.5/tr.json/translate")
+    @GET("/api/v1.5/tr.json/translate")
     fun translate(
             @Query("key") key: String = API_KEY_TRNSL,
             @Query("lang") lang: String = LANG,
