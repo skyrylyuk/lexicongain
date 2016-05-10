@@ -72,6 +72,7 @@ class TranslateActivity : Activity(), AnkoLogger {
 
             val mainThread = AndroidSchedulers.mainThread()
 
+            //TODO implement handle error case - save original text and translate later
             service.detect(text = original)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(Schedulers.computation())
