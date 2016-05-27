@@ -11,8 +11,8 @@ import android.widget.ListView
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.model.TokenPairSpecification
 import io.realm.RealmBaseAdapter
 import io.realm.RealmResults
@@ -39,7 +39,7 @@ class LibraryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        val tokenPairAdapter = TokenPairAdapter(this, repository.query(), true)
+        val tokenPairAdapter = TokenPairAdapter(this, repository.query())
 
         listView {
             id = android.R.id.list
@@ -161,8 +161,8 @@ class LibraryActivity : AppCompatActivity() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
-    class TokenPairAdapter(context: Context, realmResults: RealmResults<TokenPair>, automaticUpdate: Boolean) :
-            RealmBaseAdapter<TokenPair>(context, realmResults, automaticUpdate) {
+    class TokenPairAdapter(context: Context, val realmResults: RealmResults<TokenPair>) :
+            RealmBaseAdapter<TokenPair>(context, realmResults) {
 
         val mSelectedItemsIds = SparseBooleanArray();
 
