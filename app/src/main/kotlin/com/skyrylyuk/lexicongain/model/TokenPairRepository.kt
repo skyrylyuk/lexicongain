@@ -26,7 +26,9 @@ class TokenPairRepository {
     fun remove(specification: RealmSpecification) {
         val realm = Realm.getDefaultInstance()
         realm.executeTransaction {
-            specification.toRealmResults(realm).clear()
+            specification.toRealmResults(realm).forEach {
+                it.deleteFromRealm()
+            }
         }
 
         realm.close()
