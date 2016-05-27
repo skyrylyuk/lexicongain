@@ -85,35 +85,38 @@ class TranslateActivity : Activity(), AnkoLogger {
                     .map { response ->
                         response.get(YandexTranslate.TEXT).asString
                     }.observeOn(mainThread)
+                    .doOnNext { translation ->
+
+                        repository.add(TokenPair().apply {
+                            originalText = original
+                            translateText = translation
+                        })
+                    }
+                    .onErrorReturn {
+                        error { " Request to server finish with error: ${it.message} " }
+                        repository.add(TokenPair().apply {
+                            originalText = original
+                        })
+                        "Fallback Error"
+                    }
                     .doOnNext {
                         txvTranslateText.text = it
                         txvTranslateText.visibility = View.VISIBLE
-                    }
-                    .doOnNext { translation ->
-                        val tokenPair = TokenPair().apply {
-                            originalText = original
-                            translateText = translation
-                        }
-
-                        repository.add(tokenPair)
                     }
                     .delay(4, TimeUnit.SECONDS)
                     .observeOn(mainThread)
                     .subscribe({
                         txvTranslateText.visibility = View.GONE
-                        finish()
-                        //TODO fix slide up out animation R.anim.anim_out_up
-                        this.overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)
-                    }, errorHandler)
+
+                        closeActivity()
+
+                    })
         }
 
     }
 
-    val errorHandler = fun(throwable: Throwable) {
-        txvOriginalText.text = "WTF"
-        error { " Request to server finish with error: ${throwable.message} " }
+    fun closeActivity() {
 
-        //  txvTranslateText.visibility = View.GONE
         finish()
         //TODO fix slide up out animation R.anim.anim_out_up
         overridePendingTransition(R.anim.anim_empty, android.R.anim.fade_out)

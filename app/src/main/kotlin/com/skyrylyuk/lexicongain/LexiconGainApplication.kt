@@ -27,8 +27,6 @@ class LexiconGainApplication : Application() {
                 .modules(DBModule())
                 .build()
 
-        Realm.deleteRealm(realmConfig)
-
         Realm.setDefaultConfiguration(realmConfig)
 
         val instance = Realm.getDefaultInstance()
