@@ -8,5 +8,10 @@ android:
     - extra-android-m2repository
     - extra-google-m2repository
 
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
 script:
    - ./gradlew build
