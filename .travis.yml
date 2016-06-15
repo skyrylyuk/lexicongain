@@ -3,14 +3,15 @@ jdk: oraclejdk8
 android:
   components:
     - platform-tools
-    - tools
+#    - tools
     - build-tools-23.0.3
     - android-23
     - extra-android-m2repository
-    - extra-google-m2repository
+#    - extra-google-m2repository
 
 cache:
   directories:
+    - $HOME/.gradle/2.14
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
