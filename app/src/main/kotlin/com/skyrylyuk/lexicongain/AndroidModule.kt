@@ -7,8 +7,6 @@ import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import dagger.Module
 import dagger.Provides
-import io.realm.Realm
-import org.jetbrains.annotations.NotNull
 import retrofit.GsonConverterFactory
 import retrofit.Retrofit
 import retrofit.RxJavaCallAdapterFactory
@@ -38,7 +36,7 @@ class AndroidModule(private val context: Application) {
     @Provides
     @Singleton
     fun provideService(): YandexTranslate {
-        var restAdapter = Retrofit.Builder()
+        val restAdapter = Retrofit.Builder()
                 .baseUrl(YandexTranslate.HOST)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
