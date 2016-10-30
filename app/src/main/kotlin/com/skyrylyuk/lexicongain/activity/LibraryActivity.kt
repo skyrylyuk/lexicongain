@@ -1,25 +1,16 @@
 package com.skyrylyuk.lexicongain.activity
 
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.SparseBooleanArray
-import android.view.*
+import android.view.ActionMode
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.AbsListView
 import android.widget.ListView
-import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPair
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
-import com.skyrylyuk.lexicongain.model.TokenPairSpecification
-import io.realm.RealmBaseAdapter
-import io.realm.RealmResults
 import org.jetbrains.anko.listView
 import org.jetbrains.anko.onItemClick
-import rx.Observable
-import javax.inject.Inject
 
 /**
  *
@@ -27,8 +18,8 @@ import javax.inject.Inject
  */
 class LibraryActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var repository: TokenPairRepository
+//    @Inject
+//    lateinit var repository: TokenPairRepository
 
 
 
@@ -39,24 +30,24 @@ class LibraryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        val tokenPairAdapter = TokenPairAdapter(this, repository.query())
+//        val tokenPairAdapter = TokenPairAdapter(this, repository.query())
 
         listView {
             id = android.R.id.list
             choiceMode = ListView.CHOICE_MODE_MULTIPLE_MODAL
             itemsCanFocus = false
-            adapter = tokenPairAdapter
+//            adapter = tokenPairAdapter
             onItemClick { adapterView, view, i, l ->
-                val tokenPair = tokenPairAdapter.getItem(i)
+//                val tokenPair = tokenPairAdapter.getItem(i)
 
-                AddDialog.newInstance(tokenPair.originalText).show(fragmentManager, AddDialog.TAG)
+//                AddDialog.newInstance(tokenPair.originalText).show(fragmentManager, AddDialog.TAG)
             }
             setMultiChoiceModeListener(object : AbsListView.MultiChoiceModeListener {
                 override fun onItemCheckedStateChanged(mode: ActionMode?, position: Int, id: Long, checked: Boolean) {
-                    tokenPairAdapter.selectView(position, checked)
+//                    tokenPairAdapter.selectView(position, checked)
 
                     mode?.setTitle(R.string.action_library_edit)
-                    mode?.subtitle = "Checked ${tokenPairAdapter.getSelectionItemCount()}"
+//                    mode?.subtitle = "Checked ${tokenPairAdapter.getSelectionItemCount()}"
                 }
 
                 override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
@@ -66,21 +57,21 @@ class LibraryActivity : AppCompatActivity() {
                 override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
                     when (item?.itemId) {
                         R.id.action_delete -> {
-                            val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
+//                            val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
 
                             // All writes must be wrapped in a transaction to facilitate safe multi threading
-                            Observable.range(0, selectedIds.size())
-                                    .filter { selectedIds.valueAt(it) }
-                                    .map { tokenPairAdapter.getItem(selectedIds.keyAt(it)) }
-                                    .filter { it != null }
-                                    .subscribe { tokenPair ->
-                                        repository.remove(TokenPairSpecification(tokenPair.originalText))
-                                    }
-
-
-                            mode?.finish()
-                            tokenPairAdapter.removeSelection()
-                            tokenPairAdapter.notifyDataSetChanged()
+//                            Observable.range(0, selectedIds.size())
+//                                    .filter { selectedIds.valueAt(it) }
+//                                    .map { tokenPairAdapter.getItem(selectedIds.keyAt(it)) }
+//                                    .filter { it != null }
+//                                    .subscribe { tokenPair ->
+//                                        repository.remove(TokenPairSpecification(tokenPair.originalText))
+//                                    }
+//
+//
+//                            mode?.finish()
+//                            tokenPairAdapter.removeSelection()
+//                            tokenPairAdapter.notifyDataSetChanged()
                             return true
                         }
                         else -> {
@@ -100,7 +91,7 @@ class LibraryActivity : AppCompatActivity() {
 
                 override fun onDestroyActionMode(mode: ActionMode?) {
                     println("onDestroyActionMode")
-                    tokenPairAdapter.removeSelection()
+//                    tokenPairAdapter.removeSelection()
                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
                 }
             })
@@ -161,7 +152,8 @@ class LibraryActivity : AppCompatActivity() {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
     }
 
-    class TokenPairAdapter(context: Context, val realmResults: RealmResults<TokenPair>) :
+/*
+class TokenPairAdapter(context: Context, val realmResults: RealmResults<TokenPair>) :
             RealmBaseAdapter<TokenPair>(context, realmResults) {
 
         val mSelectedItemsIds = SparseBooleanArray();
@@ -210,4 +202,5 @@ class LibraryActivity : AppCompatActivity() {
             return mSelectedItemsIds;
         }
     }
+    */
 }

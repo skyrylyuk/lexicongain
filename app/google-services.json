@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "99230842090",
+    "firebase_url": "https://lexicongain.firebaseio.com",
+    "project_id": "lexicongain",
+    "storage_bucket": "lexicongain.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:99230842090:android:0a76670d5bfea885",
+        "android_client_info": {
+          "package_name": "com.skyrylyuk.lexicongain"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "99230842090-uhf8vk0gu29slfnc2a7e2b0i616p3mt4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhU-HRkBG1zZCNMh0-cD5My7GHt_Xcwbg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

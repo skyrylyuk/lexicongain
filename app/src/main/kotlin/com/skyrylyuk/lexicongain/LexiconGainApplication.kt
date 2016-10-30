@@ -1,10 +1,8 @@
 package com.skyrylyuk.lexicongain
 
 import android.app.Application
-import com.skyrylyuk.lexicongain.model.DBModule
-import com.skyrylyuk.lexicongain.model.IrregularVerb
-import io.realm.Realm
-import io.realm.RealmConfiguration
+import com.google.firebase.database.DatabaseReference
+import timber.log.Timber
 
 
 /**
@@ -16,27 +14,58 @@ class LexiconGainApplication : Application() {
     companion object {
         //platformStatic allow access it from java code
         @JvmStatic lateinit var graph: ApplicationComponent
+
+        @JvmStatic lateinit var ref: DatabaseReference
     }
 
     override fun onCreate() {
 
+        Timber.plant(Timber.DebugTree())
 
-        // Setup
-        val realmConfig: RealmConfiguration = RealmConfiguration.Builder(applicationContext)
-                .name("lexicon.realm")
-                .modules(DBModule())
-                .build()
-
-        Realm.setDefaultConfiguration(realmConfig)
-
-        val instance = Realm.getDefaultInstance()
-        if (instance.where(IrregularVerb::class.java).count() == 0L) {
-            instance.executeTransaction {
-                instance.createAllFromJson(IrregularVerb::class.java, assets.open("IrregularVerb.json"))
-            }
-        }
 
         graph = DaggerApplicationComponent.builder().androidModule(AndroidModule(this)).build()
+
+
+/*
+        firebase = FirebaseDatabase.getInstance()
+        val reference: DatabaseReference = firebase.reference
+
+        Log.w("App", "==> reference  $reference")
+        w{"==> reference  $reference"}
+
+
+
+        val key = reference.child("lexicongain").key
+        Log.w("App", "==> key  $key")
+
+        reference.addValueEventListener(object: ValueEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                e{"==> error: $error"}
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot?) {
+                val list = snapshot?.value as List<TokenPair>
+                i{"==> snapshot raw $list"}
+                i{"==> snapshot raw ${list.size}"}
+//                i{"==> snapshot raw ${list.size}"}
+            }
+//            override fun onDataChange(DataSnapshot snapshot) {
+//                System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
+//            }
+//            @Override public void onCancelled(FirebaseError error) { }
+        })
+
+        reference.limitToFirst(1).addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(error: DatabaseError?) {
+                e{"==> error2: $error"}
+            }
+
+            override fun onDataChange(data: DataSnapshot?) {
+                i{"==> snapshot raw2: ${data?.value}"}
+//                i{"==> snapshot raw2: ${data?.getValue(TokenPair::class.java)}"}
+            }
+        })
+*/
 
     }
 }

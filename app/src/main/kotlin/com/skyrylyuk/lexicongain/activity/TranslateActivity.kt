@@ -11,8 +11,6 @@ import android.view.View
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPair
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import org.jetbrains.anko.*
 import rx.android.schedulers.AndroidSchedulers
@@ -28,8 +26,8 @@ import kotlin.properties.Delegates
 
 class TranslateActivity : Activity(), AnkoLogger {
 
-    @Inject
-    lateinit var repository: TokenPairRepository
+//    @Inject
+//    lateinit var repository: TokenPairRepository
 
     @Inject
     lateinit var service: YandexTranslate
@@ -87,16 +85,16 @@ class TranslateActivity : Activity(), AnkoLogger {
                     }.observeOn(mainThread)
                     .doOnNext { translation ->
 
-                        repository.add(TokenPair().apply {
-                            originalText = original
-                            translateText = translation
-                        })
+//                        repository.add(TokenPair().apply {
+//                            originalText = original
+//                            translateText = translation
+//                        })
                     }
                     .onErrorReturn {
                         error { " Request to server finish with error: ${it.message} " }
-                        repository.add(TokenPair().apply {
-                            originalText = original
-                        })
+//                        repository.add(TokenPair().apply {
+//                            originalText = original
+//                        })
                         "Fallback Error"
                     }
                     .doOnNext {

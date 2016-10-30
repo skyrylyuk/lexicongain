@@ -1,31 +1,30 @@
 package com.skyrylyuk.lexicongain.model
 
-import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
-import java.util.*
+import com.google.firebase.database.IgnoreExtraProperties
 
 /**
  *
  * Created by skyrylyuk on 11/11/15.
  */
 
-@RealmClass
-open class TokenPair(
+@IgnoreExtraProperties
+class TokenPair {
+    var originalText: String = ""
+    var translateText: String = ""
+    var creationDate: Long = System.currentTimeMillis()
+    var updateDate: Long = System.currentTimeMillis()
+    var phase: Int = 1
 
-        @PrimaryKey
-        open var originalText: String = "",
+    override fun toString(): String {
+        return "TokenPair(originalText='$originalText', translateText='$translateText', creationDate=$creationDate, updateDate=$updateDate, phase=$phase)"
+    }
+}
 
-        open var translateText: String = "",
+class TokenPairHolder {
+    var key: String = ""
+    var value: TokenPair = TokenPair()
 
-        open var isIrregularVerb: Boolean = false,
-
-        open var creationDate: Date = Date(),
-
-        open var updateDate: Date = Date(),
-
-        open var phase: Int = 1
-
-) : RealmObject () {
-
+    override fun toString(): String {
+        return "TokenPairHolder( key='$key', value='$value'"
+    }
 }

@@ -12,12 +12,19 @@ import android.view.MotionEvent
 import android.view.MotionEvent.*
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.github.ajalt.timberkt.i
+import com.google.firebase.database.*
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
+import com.skyrylyuk.lexicongain.model.TokenPair
+import com.skyrylyuk.lexicongain.model.TokenPairHolder
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
+import com.skyrylyuk.lexicongain.util.parse
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.coordinatorLayout
 import org.jetbrains.anko.design.floatingActionButton
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -33,12 +40,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     @Inject
     lateinit var presenter: TokenPairPresenter
 
+    @Inject
+    lateinit var ref: DatabaseReference
+
     var txvOriginalText: TextView by Delegates.notNull()
     var txvTranslateText: TextView by Delegates.notNull()
 
     var startX: Float = 0f
     val hsvSource = FloatArray(3)
     var shift: Float = 0f
+
+    var currentTokenHolder: TokenPairHolder? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +59,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
 
         val mainColor = ContextCompat.getColor(this, R.color.main_color)
-        val slaveColor = ContextCompat.getColor(this, R.color.slave_color);
+        val slaveColor = ContextCompat.getColor(this, R.color.slave_color)
 
         coordinatorLayout {
             verticalLayout {
@@ -57,9 +69,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     textSize = resources.getDimension(R.dimen.main_activity_font_size)
                     gravity = Gravity.CENTER
                     onClick {
-                        var lp = txvTranslateText.layoutParams as LinearLayout.LayoutParams
+                        val lp = txvTranslateText.layoutParams as LinearLayout.LayoutParams
 
-                        if(lp.weight == 1.0f){
+                        if (lp.weight == 1.0f) {
                             presenter.showNextCard()
                         } else {
                             presenter.showTranslation()
@@ -110,11 +122,29 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             floatingActionButton {
                 imageResource = R.drawable.ic_add_white
                 onClick {
-                    AddDialog.newInstance().show(fragmentManager, AddDialog.TAG)
+
+
+                            currentTokenHolder?.let {
+                                val value = it.value
+
+                                value.phase = 3
+                                value.updateDate = System.currentTimeMillis()
+
+                                ref.child(it.key).setValue(value)
+//                                ref.child(tokenPairHolder.key).child("phase").setValue(2)
+                            }
+
+                    val timestamp = SimpleDateFormat("hh_mm", Locale.US).format(Date())
+
+                    val value = TokenPair().apply {
+                        originalText = "one $timestamp"
+                        translateText = "one $timestamp"
+                    }
+//                    ref.push().setValue(value)
                 }
-                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(resources.getColor(R.color.fab_color)))
-            }.lparams{
-                gravity = Gravity.BOTTOM or Gravity.RIGHT
+                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(ContextCompat.getColor(this@MainActivity, R.color.fab_color)))
+            }.lparams {
+                gravity = Gravity.BOTTOM or Gravity.RIGHT or Gravity.END
                 margin = 10
             }
         }
@@ -123,6 +153,45 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         presenter.attachView(txvOriginalText, txvTranslateText)
 
         presenter.showNextCard()
+
+        ref.orderByChild("updateDate").limitToFirst(    1).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError?) {
+                i { "==> ValueEventListener onCancelled" }
+            }
+
+            override fun onDataChange(p0: DataSnapshot?) {
+                i { "==> ValueEventListener onDataChange $p0" }
+                currentTokenHolder = p0?.parse()
+                currentTokenHolder?.let {
+
+                    val currentToken = it.value
+                    txvOriginalText.text = currentToken.originalText
+                    txvTranslateText.text = currentToken.translateText
+                }
+            }
+        })
+
+        ref.orderByChild("updateDate").limitToFirst(1).addChildEventListener(object : ChildEventListener {
+            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+                i { "==> onChildMoved }" }
+            }
+
+            override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+                i { "==> onChildChanged" }
+            }
+
+            override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
+                i { "==> onChildAdded" }
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot?) {
+                i { "==> onChildRemoved" }
+            }
+
+            override fun onCancelled(p0: DatabaseError?) {
+                i { "==> onCancelled" }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -136,7 +205,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         when (item.itemId) {
             R.id.action_library -> {
                 startActivity<LibraryActivity>()
-                overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out);
+                overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out)
             }
         }
 
@@ -147,5 +216,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         super.onDestroy()
 
         presenter.detachView()
+
+
     }
 }

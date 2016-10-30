@@ -2,7 +2,8 @@ package com.skyrylyuk.lexicongain
 
 import android.app.Application
 import android.content.Context
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import dagger.Module
@@ -29,12 +30,6 @@ class AndroidModule(private val context: Application) {
 
     @Provides
     @Singleton
-    fun provideRealm(): TokenPairRepository {
-        return TokenPairRepository()
-    }
-
-    @Provides
-    @Singleton
     fun provideService(): YandexTranslate {
         val restAdapter = Retrofit.Builder()
                 .baseUrl(YandexTranslate.HOST)
@@ -51,4 +46,12 @@ class AndroidModule(private val context: Application) {
     fun provideIrregularVerbPresenter(): TokenPairPresenter {
         return TokenPairPresenter()
     }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseReference(): DatabaseReference {
+        return FirebaseDatabase.getInstance().reference//.child("tokens")
+    }
+
+
 }

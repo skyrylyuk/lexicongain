@@ -6,9 +6,6 @@ import android.view.animation.Animation
 import android.widget.TextView
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.ListTokenPairSpecification
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
-import com.skyrylyuk.lexicongain.util.plus
 import com.skyrylyuk.lexicongain.view.CollapseAnimation
 import com.skyrylyuk.lexicongain.view.ExpandAnimation
 import org.jetbrains.anko.backgroundColor
@@ -26,8 +23,6 @@ class TokenPairPresenter {
     @Inject
     lateinit var context: Context
 
-    @Inject
-    lateinit var repository: TokenPairRepository
 
     var slaveColor = 0
 
@@ -58,10 +53,10 @@ class TokenPairPresenter {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                val nextCard = repository.getNextCard()
-
-                originalText?.text = nextCard?.originalText ?: context.getString(R.string.original_text)
-                translateText?.text = nextCard?.translateText ?: context.getString(R.string.translate_text)
+//                val nextCard = repository.getNextCard()
+//
+//                originalText?.text = nextCard?.originalText ?: context.getString(R.string.original_text)
+//                translateText?.text = nextCard?.translateText ?: context.getString(R.string.translate_text)
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -79,6 +74,7 @@ class TokenPairPresenter {
 
     fun markOldestCard(date: Boolean) {
 
+/*
         val tokenPair = repository.queryCopyFromRealm(ListTokenPairSpecification()).firstOrNull()
         if (tokenPair != null) {
 
@@ -93,6 +89,7 @@ class TokenPairPresenter {
 
             repository.add(tokenPair)
         }
+*/
 
         showNextCard()
     }
@@ -100,6 +97,7 @@ class TokenPairPresenter {
     fun getPhaseDuration(phase: Int): Long {
         val sqrt5 = Math.sqrt(5.0)
         val phi = (sqrt5 + 1) / 2
+
 
         Math.floor(Math.pow(phi, phase.toDouble()) / sqrt5 + 0.5).toInt()
 

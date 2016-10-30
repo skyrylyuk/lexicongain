@@ -10,9 +10,6 @@ import android.widget.EditText
 import com.jakewharton.rxbinding.widget.afterTextChangeEvents
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.ListTokenPairSpecification
-import com.skyrylyuk.lexicongain.model.TokenPair
-import com.skyrylyuk.lexicongain.model.TokenPairRepository
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import org.jetbrains.anko.*
 import rx.android.schedulers.AndroidSchedulers
@@ -27,8 +24,6 @@ import javax.inject.Inject
  */
 class AddDialog : DialogFragment() {
 
-    @Inject
-    lateinit var repository: TokenPairRepository
 
     @Inject
     lateinit var service: YandexTranslate
@@ -43,9 +38,9 @@ class AddDialog : DialogFragment() {
         val key: String = arguments.getString(KEY, "")
 
         if (key.isNotEmpty()) {
-            val tokenPair = repository.query(ListTokenPairSpecification(key)).first()
-            original = tokenPair.originalText
-            translation = tokenPair.translateText
+//            val tokenPair = repository.query(ListTokenPairSpecification(key)).first()
+//            original = tokenPair.originalText
+//            translation = tokenPair.translateText
         }
 
 
@@ -124,18 +119,18 @@ class AddDialog : DialogFragment() {
 
             val key: String = arguments.getString(KEY, "")
 
-            val tokenPair = if (key.isNotEmpty()) {
-                repository.query(ListTokenPairSpecification(key)).first()
-            } else {
-                TokenPair()
-            }
+//            val tokenPair = if (key.isNotEmpty()) {
+////                repository.query(ListTokenPairSpecification(key)).first()
+//            } else {
+//                TokenPair()
+//            }
 
-            tokenPair.apply {
-                originalText = original
-                translateText = translation
-            }
+//            tokenPair.apply {
+//                originalText = original
+//                translateText = translation
+//            }
 
-            repository.add(tokenPair)
+//            repository.add(tokenPair)
         }
     }
 
