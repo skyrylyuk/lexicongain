@@ -22,7 +22,6 @@
         <activity
             android:name=".activity.TranslateActivity"
             android:exported="true"
-            android:label="@string/add_card"
             android:theme="@style/Theme.Transparent" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

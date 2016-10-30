@@ -94,6 +94,7 @@ dependencies {
     compile 'com.github.ajalt:timberkt:1.1.0'
 
     compile "com.andkulikov:transitionseverywhere:1.6.9"
+    compile 'com.afollestad.material-dialogs:core:0.9.0.2'
 }
 
 buildscript {

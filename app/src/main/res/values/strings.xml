@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">LexiconGain</string>
 
-    <string name="add_card">Add card</string>
+
     <string name="action_library">Library</string>
     <string name="action_library_edit">Library Edit</string>
     <string name="action_delete">Delete</string>
@@ -13,6 +13,10 @@
     <string name="translate_text">Translate text</string>
     <string name="right">Right</string>
     <string name="wrong">Wrong</string>
+
+    <string name="add_card_title">Add card</string>
+    <string name="add_card_agree">Agree</string>
+    <string name="add_card_disagree">Disagree</string>
 
 
     <array name="lst">
