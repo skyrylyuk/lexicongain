@@ -9,8 +9,10 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import com.google.firebase.database.DatabaseReference
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
+import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import org.jetbrains.anko.*
 import rx.android.schedulers.AndroidSchedulers
@@ -26,8 +28,8 @@ import kotlin.properties.Delegates
 
 class TranslateActivity : Activity(), AnkoLogger {
 
-//    @Inject
-//    lateinit var repository: TokenPairRepository
+    @Inject
+    lateinit var ref: DatabaseReference
 
     @Inject
     lateinit var service: YandexTranslate
@@ -84,6 +86,11 @@ class TranslateActivity : Activity(), AnkoLogger {
                         response.get(YandexTranslate.TEXT).asString
                     }.observeOn(mainThread)
                     .doOnNext { translation ->
+
+                        ref.push().setValue(TokenPair().apply {
+                            originalText = original
+                            translateText = translation
+                        })
 
 //                        repository.add(TokenPair().apply {
 //                            originalText = original

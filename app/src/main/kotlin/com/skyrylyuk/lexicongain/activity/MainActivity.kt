@@ -21,7 +21,6 @@ import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPairHolder
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.parse
-import com.skyrylyuk.lexicongain.util.toDataString
 import com.transitionseverywhere.Slide
 import com.transitionseverywhere.TransitionManager
 import com.transitionseverywhere.TransitionSet
@@ -130,12 +129,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
                 currentTokenHolder = data?.parse()
                 currentTokenHolder?.let {
                     val currentToken = it.value
-                    txvOriginalText.text = currentToken.originalText + " => " + currentToken.updateDate.toDataString()
+                    txvOriginalText.text = currentToken.originalText
                     txvTranslateText.text = currentToken.translateText
                 }
             }
         })
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        txvTranslateText.visibility = View.GONE
     }
 
     private fun toggleState() {
