@@ -1,32 +1,32 @@
 package com.skyrylyuk.lexicongain.activity
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
+import android.view.*
 import android.view.MotionEvent.*
-import android.widget.LinearLayout
-import android.widget.TextView
 import com.github.ajalt.timberkt.i
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
-import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.model.TokenPairHolder
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.parse
-import org.jetbrains.anko.*
-import org.jetbrains.anko.design.coordinatorLayout
-import org.jetbrains.anko.design.floatingActionButton
-import java.text.SimpleDateFormat
-import java.util.*
+import com.skyrylyuk.lexicongain.util.toDataString
+import com.transitionseverywhere.Slide
+import com.transitionseverywhere.TransitionManager
+import com.transitionseverywhere.TransitionSet
+import com.transitionseverywhere.extra.Scale
+import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 /**
  *
@@ -43,155 +43,96 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     @Inject
     lateinit var ref: DatabaseReference
 
-    var txvOriginalText: TextView by Delegates.notNull()
-    var txvTranslateText: TextView by Delegates.notNull()
-
     var startX: Float = 0f
     val hsvSource = FloatArray(3)
     var shift: Float = 0f
 
     var currentTokenHolder: TokenPairHolder? = null
 
+    val slaveColor: Int by lazy { ContextCompat.getColor(this, R.color.slave_color) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         LexiconGainApplication.graph.inject(this)
 
 
-        val mainColor = ContextCompat.getColor(this, R.color.main_color)
-        val slaveColor = ContextCompat.getColor(this, R.color.slave_color)
+        txvOriginalText.setOnClickListener {
 
-        coordinatorLayout {
-            verticalLayout {
-                txvOriginalText = textView {
-                    backgroundColor = mainColor
-                    textColor = Color.BLACK
-                    textSize = resources.getDimension(R.dimen.main_activity_font_size)
-                    gravity = Gravity.CENTER
-                    onClick {
-                        val lp = txvTranslateText.layoutParams as LinearLayout.LayoutParams
+            toggleState()
+        }
 
-                        if (lp.weight == 1.0f) {
-                            presenter.showNextCard()
-                        } else {
-                            presenter.showTranslation()
-                        }
-                    }
-                }.lparams(width = matchParent, height = 0, weight = 1f)
-
-                txvTranslateText = textView {
-                    textColor = Color.BLACK
-                    textSize = resources.getDimension(R.dimen.main_activity_font_size)
-                    gravity = Gravity.CENTER
-                    onTouch { view, motionEvent: MotionEvent ->
-                        val actionMasked = motionEvent.actionMasked
-
-                        when (actionMasked) {
-                            ACTION_DOWN -> {
-                                startX = motionEvent.x
-                            }
-                            ACTION_MOVE -> {
-                                Color.colorToHSV(slaveColor, hsvSource)
-
-                                shift = (startX - motionEvent.x) / SENSITIVE
-                                hsvSource[0] += shift
-
-                                view.setBackgroundColor(Color.HSVToColor(hsvSource))
-                            }
-
-                            ACTION_UP, ACTION_OUTSIDE -> {
-                                when {
-                                    shift > THRESHOLD -> {
-                                        presenter.markOldestCard(true)
-                                    }
-                                    shift < -THRESHOLD -> {
-                                        presenter.markOldestCard(false)
-                                    }
-                                    else -> {
-                                        //todo  add default action or implement null operation
-                                        txvTranslateText.backgroundColor = slaveColor
-                                    }
-                                }
-                            }
-                        }
-
-                        true
-                    }
-                }.lparams(width = matchParent, height = 0, weight = 1f)
-            }.lparams(width = matchParent, height = matchParent)
-            floatingActionButton {
-                imageResource = R.drawable.ic_add_white
-                onClick {
-
-
-                            currentTokenHolder?.let {
-                                val value = it.value
-
-                                value.phase = 3
-                                value.updateDate = System.currentTimeMillis()
-
-                                ref.child(it.key).setValue(value)
-//                                ref.child(tokenPairHolder.key).child("phase").setValue(2)
-                            }
-
-                    val timestamp = SimpleDateFormat("hh_mm", Locale.US).format(Date())
-
-                    val value = TokenPair().apply {
-                        originalText = "one $timestamp"
-                        translateText = "one $timestamp"
-                    }
-//                    ref.push().setValue(value)
-                }
-                backgroundTintList = ColorStateList(arrayOf(intArrayOf(0)), intArrayOf(ContextCompat.getColor(this@MainActivity, R.color.fab_color)))
-            }.lparams {
-                gravity = Gravity.BOTTOM or Gravity.RIGHT or Gravity.END
-                margin = 10
-            }
+        addButton.setOnClickListener {
+            toast("FFAB")
+            txvTranslateText.visibility
         }
 
 
-        presenter.attachView(txvOriginalText, txvTranslateText)
+        transitionsContainer.setOnTouchListener { view, motionEvent: MotionEvent ->
+            val actionMasked = motionEvent.actionMasked
 
-        presenter.showNextCard()
+            when (actionMasked) {
+                ACTION_DOWN -> {
+                    startX = motionEvent.x
+                }
+                ACTION_MOVE -> {
+                    Color.colorToHSV(slaveColor, hsvSource)
 
-        ref.orderByChild("updateDate").limitToFirst(    1).addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError?) {
-                i { "==> ValueEventListener onCancelled" }
+                    shift = (startX - motionEvent.x) / SENSITIVE
+                    hsvSource[0] += shift
+
+                    view.setBackgroundColor(Color.HSVToColor(hsvSource))
+                }
+
+                ACTION_UP, ACTION_OUTSIDE -> {
+                    when {
+                        shift > THRESHOLD -> {
+                            markOldestCard(true)
+                        }
+                        shift < -THRESHOLD -> {
+                            markOldestCard(false)
+                        }
+                        else -> {
+                            //todo  add default action or implement null operation
+                            txvTranslateText.setBackgroundColor(slaveColor)
+                        }
+                    }
+                }
             }
 
-            override fun onDataChange(p0: DataSnapshot?) {
-                i { "==> ValueEventListener onDataChange $p0" }
-                currentTokenHolder = p0?.parse()
-                currentTokenHolder?.let {
+            true
+        }
 
+        ref.orderByChild("updateDate").limitToFirst(1).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(error: DatabaseError?) {
+                i { "==> ValueEventListener onCancelled: $error" }
+            }
+
+            override fun onDataChange(data: DataSnapshot?) {
+                i { "==> ValueEventListener onDataChange $data" }
+                currentTokenHolder = data?.parse()
+                currentTokenHolder?.let {
                     val currentToken = it.value
-                    txvOriginalText.text = currentToken.originalText
+                    txvOriginalText.text = currentToken.originalText + " => " + currentToken.updateDate.toDataString()
                     txvTranslateText.text = currentToken.translateText
                 }
             }
         })
 
-        ref.orderByChild("updateDate").limitToFirst(1).addChildEventListener(object : ChildEventListener {
-            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                i { "==> onChildMoved }" }
-            }
+    }
 
-            override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
-                i { "==> onChildChanged" }
-            }
+    private fun toggleState() {
+        TransitionManager.beginDelayedTransition(transitionsContainer, TransitionSet()
+                .addTransition(Slide(Gravity.BOTTOM))
+                .addTransition(Scale())
+                .setDuration(350)
+                .setInterpolator(FastOutSlowInInterpolator()))
 
-            override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
-                i { "==> onChildAdded" }
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot?) {
-                i { "==> onChildRemoved" }
-            }
-
-            override fun onCancelled(p0: DatabaseError?) {
-                i { "==> onCancelled" }
-            }
-        })
+        if (txvTranslateText.visibility == View.VISIBLE) {
+            txvTranslateText.visibility = View.GONE
+        } else {
+            txvTranslateText.visibility = View.VISIBLE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -216,7 +157,22 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         super.onDestroy()
 
         presenter.detachView()
+    }
 
+    fun markOldestCard(date: Boolean) {
+        toggleState()
+        transitionsContainer.setBackgroundColor(slaveColor)
 
+        currentTokenHolder?.let {
+            val value = it.value
+
+            if (date) {
+                value.phase++
+            }
+
+            value.updateDate += presenter.getPhaseDuration(value.phase)
+
+            ref.child(it.key).setValue(value)
+        }
     }
 }

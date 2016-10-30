@@ -3,6 +3,8 @@ package com.skyrylyuk.lexicongain.util
 import com.google.firebase.database.DataSnapshot
 import com.skyrylyuk.lexicongain.model.TokenPair
 import com.skyrylyuk.lexicongain.model.TokenPairHolder
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  *  Description
@@ -25,4 +27,15 @@ fun DataSnapshot.parse(): TokenPairHolder {
             }
         }
     }
+}
+
+fun Long.toDate(): Date {
+    return Date(this)
+}
+
+//val format: SimpleDateFormat by lazy { SimpleDateFormat("dd-MM-hh-mm", Locale.US) }
+val format: SimpleDateFormat by lazy { SimpleDateFormat("yyyy.MMMM.dd GGG hh:mm aaa", Locale.US) }
+
+fun Long.toDataString(): String {
+    return format.format(this.toDate())
 }
