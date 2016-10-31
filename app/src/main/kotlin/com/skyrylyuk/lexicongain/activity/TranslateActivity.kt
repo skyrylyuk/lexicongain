@@ -91,11 +91,6 @@ class TranslateActivity : Activity(), AnkoLogger {
                             originalText = original
                             translateText = translation
                         })
-
-//                        repository.add(TokenPair().apply {
-//                            originalText = original
-//                            translateText = translation
-//                        })
                     }
                     .onErrorReturn {
                         error { " Request to server finish with error: ${it.message} " }
@@ -114,7 +109,8 @@ class TranslateActivity : Activity(), AnkoLogger {
                         txvTranslateText.visibility = View.GONE
 
                         closeActivity()
-
+                    }, {
+                        closeActivity()
                     })
         }
 
