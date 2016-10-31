@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
 //                                    AuthUI.EMAIL_PROVIDER,
                                     AuthUI.GOOGLE_PROVIDER,
                                     AuthUI.FACEBOOK_PROVIDER)
-                            .setLogo(R.drawable.dictionary)
+//                            .setLogo(R.drawable.dictionary)
                             .setTheme(R.style.SplashTheme)
                             .build(),
                     RC_SIGN_IN)
