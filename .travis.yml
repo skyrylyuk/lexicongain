@@ -4,16 +4,16 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools-23.0.3
-    - android-23
+    - build-tools-24.0.3
+    - android-25
     - extra-android-m2repository
     - extra-google-m2repository
 
 cache:
   directories:
-    - $HOME/.gradle/caches/2.14
+    - $HOME/.gradle/caches/3.1
     - $HOME/.gradle/caches/jars-1
-    - $HOME/.gradle/daemon/2.14
+    - $HOME/.gradle/daemon/3.1
     - $HOME/.gradle/wrapper/
 
 script:
