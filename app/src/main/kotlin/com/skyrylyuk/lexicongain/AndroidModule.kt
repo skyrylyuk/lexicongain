@@ -2,6 +2,7 @@ package com.skyrylyuk.lexicongain
 
 import android.app.Application
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
@@ -49,8 +50,14 @@ class AndroidModule(private val context: Application) {
 
     @Provides
     @Singleton
-    fun provideFirebaseReference(): DatabaseReference {
-        return FirebaseDatabase.getInstance().reference//.child("tokens")
+    fun provideFirebaseReference(auth: FirebaseAuth): DatabaseReference {
+        return FirebaseDatabase.getInstance().reference.child(auth.currentUser?.uid)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 
 

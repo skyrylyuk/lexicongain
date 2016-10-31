@@ -1,6 +1,8 @@
 package com.skyrylyuk.lexicongain
 
 import android.app.Application
+import android.content.Context
+import android.support.multidex.MultiDex
 import com.google.firebase.database.DatabaseReference
 import timber.log.Timber
 
@@ -16,6 +18,11 @@ class LexiconGainApplication : Application() {
         @JvmStatic lateinit var graph: ApplicationComponent
 
         @JvmStatic lateinit var ref: DatabaseReference
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
     override fun onCreate() {

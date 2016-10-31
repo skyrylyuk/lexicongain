@@ -10,10 +10,11 @@ android {
 
     defaultConfig {
         applicationId "com.skyrylyuk.lexicongain"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "1.1"
+        versionName "1.2"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -59,6 +60,8 @@ repositories {
 }
 
 dependencies {
+    compile "com.android.support:multidex:1.0.1"
+
     // Android support
     compile "com.android.support:design:$support_version"
     compile "com.android.support:recyclerview-v7:$support_version"
@@ -86,10 +89,11 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.5'
 
     // Firebase
-    compile 'com.google.firebase:firebase-core:9.6.1'
-//    compile 'com.google.firebase:firebase-auth:9.6.1'
-    compile 'com.google.firebase:firebase-database:9.6.1'
+//    compile 'com.google.firebase:firebase-core:9.8.0'
+    compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.google.firebase:firebase-database:9.8.0'
 //    compile 'com.google.firebase:firebase-storage:9.6.1'
+    compile 'com.firebaseui:firebase-ui-auth:0.6.2'
     compile 'com.firebaseui:firebase-ui-database:0.6.2'
 
     compile 'com.github.ajalt:timberkt:1.1.0'

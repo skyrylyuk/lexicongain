@@ -1,9 +1,6 @@
 package com.skyrylyuk.lexicongain
 
-import com.skyrylyuk.lexicongain.activity.AddDialog
-import com.skyrylyuk.lexicongain.activity.LibraryActivity
-import com.skyrylyuk.lexicongain.activity.MainActivity
-import com.skyrylyuk.lexicongain.activity.TranslateActivity
+import com.skyrylyuk.lexicongain.activity.*
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import dagger.Component
 import javax.inject.Singleton
@@ -18,6 +15,8 @@ import javax.inject.Singleton
 interface  ApplicationComponent {
 
 //    fun inject(application: LexiconGainApplication)
+
+    fun inject(splash: SplashActivity)
 
     fun inject(main: MainActivity)
 

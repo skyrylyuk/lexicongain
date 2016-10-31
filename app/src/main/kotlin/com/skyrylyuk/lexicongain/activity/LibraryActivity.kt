@@ -1,5 +1,6 @@
 package com.skyrylyuk.lexicongain.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -8,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.github.ajalt.timberkt.Timber.d
 import com.google.firebase.database.DatabaseReference
@@ -23,7 +25,7 @@ import javax.inject.Inject
  *
  * Created by skyrylyuk on 11/17/15.
  */
-class LibraryActivity : AppCompatActivity() {
+open class LibraryActivity : AppCompatActivity() {
 
     @Inject
     lateinit var ref: DatabaseReference
@@ -41,12 +43,12 @@ class LibraryActivity : AppCompatActivity() {
         adapter = object : FirebaseRecyclerAdapter<TokenPair, TokenPairViewHolder>(TokenPair::class.java, R.layout.item_library, TokenPairViewHolder::class.java, query) {
             override fun populateViewHolder(viewHolder: TokenPairViewHolder?, model: TokenPair?, position: Int) {
                 val postRef = getRef(position)
-                d { "==> postRef = ${postRef}" }
+                d { "==> postRef = $postRef" }
 
                 // Set click listener for the whole post view
                 val postKey = postRef.key
-                d { "==> postKey = ${postKey}" }
-                d { "==> model = ${model}" }
+                d { "==> postKey = $postKey" }
+                d { "==> model = $model" }
 
                 viewHolder?.bindTo(model)
 
@@ -136,11 +138,19 @@ class LibraryActivity : AppCompatActivity() {
         when (item?.itemId) {
             android.R.id.home -> {
                 finish()
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right)
                 return true
             }
-/*
             R.id.action_export -> {
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener {
+                            // user is now signed out
+                            startActivity(Intent(this@LibraryActivity, SplashActivity::class.java))
+                            finish()
+                        }
+            }
+/*
                 val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 val file: File = File(dir, "lexicongain.backup")
 
@@ -177,7 +187,12 @@ class LibraryActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.slide_out_right)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.cleanup()
     }
 
     /*

@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "99230842090-6t82qvt9f9r8jjvi6jc41lljg4oh4v82.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skyrylyuk.lexicongain",
+            "certificate_hash": "42C77CB8404F301B1633A16CE8F2663FB6AB6F46"
+          }
+        },
+        {
+          "client_id": "99230842090-b19tqp9126aekc7fhna7pqbl0p4la8qf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skyrylyuk.lexicongain",
+            "certificate_hash": "A68C813B7DA38E3C9EA42A6060D11042F2661C11"
+          }
+        },
+        {
           "client_id": "99230842090-uhf8vk0gu29slfnc2a7e2b0i616p3mt4.apps.googleusercontent.com",
           "client_type": 3
         }
