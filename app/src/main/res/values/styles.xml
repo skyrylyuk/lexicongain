@@ -18,6 +18,10 @@
         <item name="actionModeCloseDrawable">@drawable/ic_done</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
     <style name="Theme.Transparent" parent="@android:style/Theme">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
