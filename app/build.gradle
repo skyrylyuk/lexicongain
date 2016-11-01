@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'com.ofg.uptodate'
+apply plugin: 'testfairy'
 
 android {
     compileSdkVersion 25
@@ -44,6 +45,12 @@ android {
 */
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    testfairyConfig {
+        apiKey "7510ca0b488ac2d21e63a02a530a1b610e26cb9e"
+        testersGroups "qa-stuff"
+        notify true
     }
 }
 

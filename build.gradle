@@ -18,13 +18,14 @@ buildscript {
 
 
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        classpath 'com.testfairy.plugins.gradle:testfairy:1.12'
     }
 
     repositories {
         jcenter()
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-eap'
-        }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+        maven { url 'https://www.testfairy.com/maven' }
     }
 
 }

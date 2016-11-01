@@ -17,12 +17,13 @@ cache:
     - $HOME/.gradle/wrapper/
 
 script:
-   - ./gradlew assembleDebug
+   - ./gradlew testfairyDebug
+#   - ./gradlew assembleDebug
 
-deploy:
-  provider: testfairy
-  api-key: "7510ca0b488ac2d21e63a02a530a1b610e26cb9e"
-  app-file: /home/travis/build/skyrylyuk/lexicongain/app/build/outputs/apk/app-debug.apk
+#deploy:
+#  provider: testfairy
+#  api-key: "7510ca0b488ac2d21e63a02a530a1b610e26cb9e"
+#  app-file: /home/travis/build/skyrylyuk/lexicongain/app/build/outputs/apk/app-debug.apk
 #  alias: android
 #  testers-groups: qa-stuff
 #  auto-update: true
