@@ -19,6 +19,7 @@ import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
 import kotlinx.android.synthetic.main.activity_library.*
 import kotlinx.android.synthetic.main.item_library.view.*
+import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 /**
@@ -46,8 +47,10 @@ open class LibraryActivity : AppCompatActivity() {
                 d { "==> postRef = $postRef" }
 
                 // Set click listener for the whole post view
-                val postKey = postRef.key
-                d { "==> postKey = $postKey" }
+                val tokenKey = postRef.key
+                viewHolder?.root?.setOnClickListener {
+                    toast("==> postKey = $tokenKey")
+                }
                 d { "==> model = $model" }
 
                 viewHolder?.bindTo(model)

@@ -1,49 +1,89 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="2"
-    tools:context=".activity.MainActivity">
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/transitionsContainer"
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/slave_color"
-        android:orientation="vertical">
+        android:fitsSystemWindows="true"
+        tools:context=".activity.MainActivity"
+        tools:openDrawer="start">
 
-        <TextView
-            android:id="@+id/txvOriginalText"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/main_color"
-            android:gravity="center"
-            android:clickable="true"
-            android:text="@string/original_text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
-        <TextView
-            android:id="@+id/txvTranslateText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            <LinearLayout
+                android:id="@+id/transitionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:orientation="vertical"
+                android:background="@color/slave_color"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            android:gravity="center"
-            android:text="@string/translate_text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/txvOriginalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/main_color"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="@string/original_text"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/txvTranslateText"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="@string/translate_text"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_weight="1"
-        android:layout_margin="15dp"
-        android:src="@drawable/ic_add_white" />
+            </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/addButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="15dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_add_white" />
+
+        </android.support.design.widget.CoordinatorLayout>
+        <!-- The navigation drawer -->
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:fitsSystemWindows="true"
+            app:headerLayout="@layout/activity_main_drawer_header"
+            app:menu="@menu/activity_main_drawer" />
+
+    </android.support.v4.widget.DrawerLayout>
+</LinearLayout>

@@ -4,11 +4,14 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.Gravity
+import android.view.MotionEvent
 import android.view.MotionEvent.*
+import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.ajalt.timberkt.Timber.d
 import com.github.ajalt.timberkt.i
@@ -30,6 +33,7 @@ import kotlinx.android.synthetic.main.dialog_add_card.view.*
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
+
 
 /**
  *
@@ -58,6 +62,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         LexiconGainApplication.graph.inject(this)
+
+        toolbar.title = getString(R.string.app_name)
 
 
         txvOriginalText.setOnClickListener {
@@ -108,10 +114,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
                         shift < -THRESHOLD -> {
                             markOldestCard(false)
                         }
-                        else -> {
-                            //todo  add default action or implement null operation
-                            txvTranslateText.setBackgroundColor(slaveColor)
-                        }
+//                        else -> {
+//                            txvTranslateText.setBackgroundColor(slaveColor)
+//                        }
                     }
                 }
             }
@@ -135,6 +140,27 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
             }
         })
 
+        val toggle = ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+
+        navigation.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_library -> {
+                    startActivity<LibraryActivity>()
+                    overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out)
+                }
+                else -> {
+                    drawerLayout.closeDrawers()
+                }
+            }
+
+            drawerLayout.closeDrawers()
+
+            true
+        }
+
+        toggle.syncState()
     }
 
     override fun onResume() {
@@ -156,9 +182,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.activity_main_drawer, menu)
         return true
     }
 
@@ -172,7 +198,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
         }
 
         return super.onOptionsItemSelected(item)
-    }
+    }*/
 
     override fun afterTextChanged(p0: Editable?) {
 
@@ -183,7 +209,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
     }
 
     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-        d { "==> p0 = ${p0}" }
+        d { "==> p0 = $p0" }
     }
 
     override fun onDestroy() {
