@@ -150,6 +150,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
                     startActivity<LibraryActivity>()
                     overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out)
                 }
+                R.id.action_setting -> {
+                    startActivity<SettingsActivity>()
+                    overridePendingTransition(R.anim.slide_in_rigth, android.R.anim.fade_out)
+                }
                 else -> {
                     drawerLayout.closeDrawers()
                 }
