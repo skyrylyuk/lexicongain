@@ -65,6 +65,8 @@ android {
         apiKey "7510ca0b488ac2d21e63a02a530a1b610e26cb9e"
         testersGroups "qa-stuff"
         notify true
+        autoUpdate true
+        uploadProguardMapping true
     }
 }
 
