@@ -1,5 +1,7 @@
 package com.skyrylyuk.lexicongain.activity
 
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -165,6 +167,22 @@ class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
         }
 
         toggle.syncState()
+
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+        if ((clipboard.hasPrimaryClip())) {
+
+            val item = clipboard.primaryClip.getItemAt(0)
+            val pasteData = item.text
+
+            d { "==> pasteData = $pasteData" }
+            //TODO@skyrylyuk on 11/7/16 - implement add token from clipboard
+//            Snackbar.make(container, "Clipboard contain text", Snackbar.LENGTH_LONG)
+//                    .setAction("Add") { throw UnsupportedOperationException("not implemented") }
+//                    .setActionTextColor(Color.parseColor("#00ff00"))
+//                    .show()
+        }
+
     }
 
     override fun onResume() {
