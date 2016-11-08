@@ -41,10 +41,11 @@
         </activity>
         <activity
             android:name=".activity.LibraryActivity"
-            android:label="@string/action_library" />
+            android:label="@string/action_library"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
     </application>
 
 </manifest>

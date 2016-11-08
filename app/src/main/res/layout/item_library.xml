@@ -10,12 +10,15 @@
     <TextView
         android:id="@+id/original"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
 
     <TextView
         android:id="@+id/translate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"/>
+        android:gravity="end"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
 
 </LinearLayout>

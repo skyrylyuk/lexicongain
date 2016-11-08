@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.github.ajalt.timberkt.Timber.d
@@ -18,8 +18,8 @@ import com.skyrylyuk.lexicongain.LexiconGainApplication
 import com.skyrylyuk.lexicongain.R
 import com.skyrylyuk.lexicongain.model.TokenPair
 import kotlinx.android.synthetic.main.activity_library.*
+import kotlinx.android.synthetic.main.dialog_add_card.view.*
 import kotlinx.android.synthetic.main.item_library.view.*
-import org.jetbrains.anko.toast
 import javax.inject.Inject
 
 /**
@@ -38,6 +38,7 @@ open class LibraryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_library)
         LexiconGainApplication.graph.inject(this)
 
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val query: Query = ref.orderByChild("updateDate").limitToFirst(100)
@@ -49,92 +50,45 @@ open class LibraryActivity : AppCompatActivity() {
                 // Set click listener for the whole post view
                 val tokenKey = postRef.key
                 viewHolder?.root?.setOnClickListener {
-                    toast("==> postKey = $tokenKey")
+                    showEditDialog(tokenKey, model)
                 }
                 d { "==> model = $model" }
 
                 viewHolder?.bindTo(model)
 
-                viewHolder?.root?.setBackgroundResource(if(position % 2 == 0) {R.color.main_color} else {R.color.slave_color})
+                viewHolder?.root?.setBackgroundResource(if (position % 2 == 0) {
+                    R.color.main_color
+                } else {
+                    R.color.slave_color
+                })
             }
         }
 
         tokens.adapter = adapter
         tokens.layoutManager = LinearLayoutManager(this)
+        tokens.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0  && addButton.isShown) {
+                    addButton.hide()
+                } else {
+                    addButton.show()
+                }
+            }
 
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
 
-//        val tokenPairAdapter = TokenPairAdapter(this, repository.query())
+                }
 
-        /* listView {
-             id = android.R.id.list
-             choiceMode = ListView.CHOICE_MODE_MULTIPLE_MODAL
-             itemsCanFocus = false
- //            adapter = tokenPairAdapter
-             onItemClick { adapterView, view, i, l ->
- //                val tokenPair = tokenPairAdapter.getItem(i)
-
- //                AddDialog.newInstance(tokenPair.originalText).show(fragmentManager, AddDialog.TAG)
-             }
-             setMultiChoiceModeListener(object : AbsListView.MultiChoiceModeListener {
-                 override fun onItemCheckedStateChanged(mode: ActionMode?, position: Int, id: Long, checked: Boolean) {
- //                    tokenPairAdapter.selectView(position, checked)
-
-                     mode?.setTitle(R.string.action_library_edit)
- //                    mode?.subtitle = "Checked ${tokenPairAdapter.getSelectionItemCount()}"
-                 }
-
-                 override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                     return false
-                 }
-
-                 override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                     when (item?.itemId) {
-                         R.id.action_delete -> {
- //                            val selectedIds: SparseBooleanArray = tokenPairAdapter.getSelectedIds()
-
-                             // All writes must be wrapped in a transaction to facilitate safe multi threading
- //                            Observable.range(0, selectedIds.size())
- //                                    .filter { selectedIds.valueAt(it) }
- //                                    .map { tokenPairAdapter.getItem(selectedIds.keyAt(it)) }
- //                                    .filter { it != null }
- //                                    .subscribe { tokenPair ->
- //                                        repository.remove(TokenPairSpecification(tokenPair.originalText))
- //                                    }
- //
- //
- //                            mode?.finish()
- //                            tokenPairAdapter.removeSelection()
- //                            tokenPairAdapter.notifyDataSetChanged()
-                             return true
-                         }
-                         else -> {
-                             return false
-                         }
-                     }
-
-                 }
-
-                 override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                     supportActionBar?.setHomeActionContentDescription("ContentDescription")
-
-                     mode?.menuInflater?.inflate(R.menu.library_action_mode_menu, menu)
-
-                     return true
-                 }
-
-                 override fun onDestroyActionMode(mode: ActionMode?) {
-                     println("onDestroyActionMode")
- //                    tokenPairAdapter.removeSelection()
-                     supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                 }
-             })
-         }*/
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater?.inflate(R.menu.library_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+//        menuInflater?.inflate(R.menu.library_menu, menu)
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
 
@@ -153,36 +107,6 @@ open class LibraryActivity : AppCompatActivity() {
                             finish()
                         }
             }
-/*
-                val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val file: File = File(dir, "lexicongain.backup")
-
-                file.delete()
-
-                realm.writeCopyTo(file)
-
-                println("Complite")
-            }
-            R.id.action_import -> {
-                val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                val file: File = File(dir, "lexicongain.backup")
-
-                if (file.exists()) {
-                    realm.executeTransaction {
-                        file.readLines().forEach {
-                            val split = it.split(":")
-                            println("it = $split")
-                            realm.copyToRealm(TokenPair(
-                                    originalText = split[0],
-                                    translateText = split[1],
-                                    phase = split[2].toInt()
-                            ))
-                        }
-
-                    }
-                }
-            }
-*/
         }
 
         return super.onOptionsItemSelected(item)
@@ -198,60 +122,35 @@ open class LibraryActivity : AppCompatActivity() {
         adapter.cleanup()
     }
 
-    /*
-    class TokenPairAdapter(context: Context, val realmResults: RealmResults<TokenPair>) :
-                RealmBaseAdapter<TokenPair>(context, realmResults) {
+    fun showEditDialog(key: String?, model: TokenPair?) {
+        val dialog = MaterialDialog.Builder(this)
+                .title(R.string.add_card_title)
+                .customView(R.layout.dialog_add_card, false)
+                .positiveText(R.string.add_card_agree)
+                .onPositive { dialog, which ->
+                    model?.originalText = dialog.view.newOriginalText.text.toString()
+                    model?.translateText = dialog.view.newTranslateText.text.toString()
 
-            val mSelectedItemsIds = SparseBooleanArray();
-
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-
-                val inflate = inflater.inflate(android.R.layout.simple_list_item_2, parent, false)
-
-                val text1: TextView = inflate.findViewById(android.R.id.text1) as TextView
-                val text2: TextView = inflate.findViewById(android.R.id.text2) as TextView
-
-                val tokenPair = realmResults[position]
-                text1.text = tokenPair.originalText
-                text2.text = tokenPair.translateText
-
-                if (mSelectedItemsIds.get(position, false)) {
-                    inflate.setBackgroundResource(R.color.main_color)
-                } else {
-                    inflate.setBackgroundColor(Color.TRANSPARENT)
+                    saveModel(key, model)
                 }
+                .negativeText(R.string.add_card_disagree)
+                .onNeutral { dialog, which ->  }
+                .show()
 
+        dialog.view.newOriginalText.setText(model?.originalText)
+        dialog.view.newTranslateText.setText(model?.translateText)
+    }
 
-                return inflate
-            }
+    fun saveModel(key: String?, model: TokenPair?) {
+        ref.child(key).setValue(TokenPair().apply {
+            originalText = model?.originalText ?: ""
+            translateText = model?.translateText ?: ""
+        })
+    }
 
-            fun selectView(position: Int, value: Boolean) {
-                if (value) {
-                    mSelectedItemsIds.put(position, value)
-                } else {
-                    mSelectedItemsIds.delete(position)
-                }
-
-                notifyDataSetChanged();
-            }
-
-            fun removeSelection() {
-                mSelectedItemsIds.clear() //= SparseBooleanArray()
-                notifyDataSetChanged()
-            }
-
-            fun getSelectionItemCount(): Int {
-                return mSelectedItemsIds.size()
-            }
-
-            fun getSelectedIds(): SparseBooleanArray {
-                return mSelectedItemsIds;
-            }
-        }
-        */
     class TokenPairViewHolder(val root: View) : RecyclerView.ViewHolder(root) {
 
-        val original: TextView by lazy { root.original}
+        val original: TextView by lazy { root.original }
         val translate: TextView by lazy { root.translate }
 
         fun bindTo(tokenPair: TokenPair?) {

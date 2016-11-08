@@ -32,7 +32,6 @@ import com.transitionseverywhere.TransitionSet
 import com.transitionseverywhere.extra.Scale
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_add_card.view.*
-import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.startActivity
 import javax.inject.Inject
 
@@ -41,7 +40,7 @@ import javax.inject.Inject
  *
  * Created by skyrylyuk on 11/11/15.
  */
-class MainActivity : AppCompatActivity(), AnkoLogger, TextWatcher {
+class MainActivity : AppCompatActivity(), TextWatcher {
 
     val SENSITIVE: Int = 10
     val THRESHOLD = 15
