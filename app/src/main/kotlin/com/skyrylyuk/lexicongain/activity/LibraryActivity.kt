@@ -2,6 +2,7 @@ package com.skyrylyuk.lexicongain.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -83,6 +84,10 @@ open class LibraryActivity : AppCompatActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
             }
         })
+
+        addButton.setOnClickListener {
+            Snackbar.make(addButton, "Show", Snackbar.LENGTH_LONG).show()
+        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -141,11 +146,12 @@ open class LibraryActivity : AppCompatActivity() {
         dialog.view.newTranslateText.setText(model?.translateText)
     }
 
+    fun takeModel(key: String?) {
+
+    }
+
     fun saveModel(key: String?, model: TokenPair?) {
-        ref.child(key).setValue(TokenPair().apply {
-            originalText = model?.originalText ?: ""
-            translateText = model?.translateText ?: ""
-        })
+        ref.child(key).setValue(model)
     }
 
     class TokenPairViewHolder(val root: View) : RecyclerView.ViewHolder(root) {
