@@ -3,6 +3,8 @@ package com.skyrylyuk.lexicongain
 import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDex
+import android.util.Log
+import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DatabaseReference
 import timber.log.Timber
 
@@ -27,53 +29,27 @@ class LexiconGainApplication : Application() {
 
     override fun onCreate() {
 
-        Timber.plant(Timber.DebugTree())
+        if(BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        } else {
+            Timber.plant(FirebaseTree())
+        }
 
 
         graph = DaggerApplicationComponent.builder().androidModule(AndroidModule(this)).build()
-
-
-/*
-        firebase = FirebaseDatabase.getInstance()
-        val reference: DatabaseReference = firebase.reference
-
-        Log.w("App", "==> reference  $reference")
-        w{"==> reference  $reference"}
-
-
-
-        val key = reference.child("lexicongain").key
-        Log.w("App", "==> key  $key")
-
-        reference.addValueEventListener(object: ValueEventListener {
-            override fun onCancelled(error: DatabaseError) {
-                e{"==> error: $error"}
-            }
-
-            override fun onDataChange(snapshot: DataSnapshot?) {
-                val list = snapshot?.value as List<TokenPair>
-                i{"==> snapshot raw $list"}
-                i{"==> snapshot raw ${list.size}"}
-//                i{"==> snapshot raw ${list.size}"}
-            }
-//            override fun onDataChange(DataSnapshot snapshot) {
-//                System.out.println(snapshot.getValue());  //prints "Do you have data? You'll love Firebase."
-//            }
-//            @Override public void onCancelled(FirebaseError error) { }
-        })
-
-        reference.limitToFirst(1).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onCancelled(error: DatabaseError?) {
-                e{"==> error2: $error"}
-            }
-
-            override fun onDataChange(data: DataSnapshot?) {
-                i{"==> snapshot raw2: ${data?.value}"}
-//                i{"==> snapshot raw2: ${data?.getValue(TokenPair::class.java)}"}
-            }
-        })
-*/
-
     }
 }
 
+internal class FirebaseTree : Timber.Tree() {
+    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+        if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+            return
+        }
+
+        FirebaseCrash.log(message)
+
+        if (t != null) {
+            FirebaseCrash.report(t)
+        }
+    }
+}
