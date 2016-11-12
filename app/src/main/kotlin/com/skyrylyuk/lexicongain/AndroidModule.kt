@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Logger
 import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import dagger.Module
@@ -51,7 +52,10 @@ class AndroidModule(private val context: Application) {
     @Provides
     @Singleton
     fun provideFirebaseReference(auth: FirebaseAuth): DatabaseReference {
-        return FirebaseDatabase.getInstance().reference.child(auth.currentUser?.uid)
+        val instance = FirebaseDatabase.getInstance()
+        instance.setLogLevel(Logger.Level.DEBUG)
+        instance.setPersistenceEnabled(true)
+        return instance.reference.child(auth.currentUser?.uid)
     }
 
     @Provides
