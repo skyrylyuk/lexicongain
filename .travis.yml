@@ -15,6 +15,7 @@ cache:
     - $HOME/.gradle/caches/jars-1
     - $HOME/.gradle/daemon/3.1
     - $HOME/.gradle/wrapper/
+    - $ANDROID_HOME/
 
 before_script:
 #    - echo $ANDROID_HOME
