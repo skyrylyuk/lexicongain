@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.util.Log
+import com.evernote.android.job.JobManager
 import com.google.firebase.crash.FirebaseCrash
 import com.google.firebase.database.DatabaseReference
 import timber.log.Timber
@@ -29,7 +30,7 @@ class LexiconGainApplication : Application() {
 
     override fun onCreate() {
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(FirebaseTree())
@@ -37,6 +38,10 @@ class LexiconGainApplication : Application() {
 
 
         graph = DaggerApplicationComponent.builder().androidModule(AndroidModule(this)).build()
+
+        JobManager.create(this).addJobCreator { TranslateService() }
+        TranslateService.scheduleJob()
+
     }
 }
 

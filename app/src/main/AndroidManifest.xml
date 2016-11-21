@@ -46,6 +46,15 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/title_activity_settings" />
+
+        <service
+            android:name=".TranslateService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>"
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

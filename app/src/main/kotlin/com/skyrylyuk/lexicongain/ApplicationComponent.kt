@@ -27,4 +27,6 @@ interface  ApplicationComponent {
     fun inject(library: LibraryActivity)
 
     fun inject(tokenPairPresenter: TokenPairPresenter)
+
+    fun inject(service: TranslateService)
 }
