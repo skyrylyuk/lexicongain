@@ -1,5 +1,6 @@
 package com.skyrylyuk.lexicongain
 
+//import retrofit2.RxJavaCallAdapterFactory
 import android.app.Application
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
@@ -10,9 +11,9 @@ import com.skyrylyuk.lexicongain.presenter.TokenPairPresenter
 import com.skyrylyuk.lexicongain.util.YandexTranslate
 import dagger.Module
 import dagger.Provides
-import retrofit.GsonConverterFactory
-import retrofit.Retrofit
-import retrofit.RxJavaCallAdapterFactory
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 /**

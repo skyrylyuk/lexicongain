@@ -72,6 +72,10 @@ class MainActivity : AppCompatActivity(), TextWatcher {
             toggleState()
         }
 
+
+
+
+
         addButton.setOnClickListener {
             val dialog = MaterialDialog.Builder(this)
                     .title(R.string.add_card_title)
