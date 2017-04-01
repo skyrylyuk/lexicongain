@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), TextWatcher {
                     .title(R.string.add_card_title)
                     .customView(R.layout.dialog_add_card, false)
                     .positiveText(R.string.add_card_agree)
-                    .onPositive { dialog, which ->
+                    .onPositive { dialog, _ ->
                         val newOriginal = dialog.view.newOriginalText.text
                         val newTranslate = dialog.view.newTranslateText.text
                         i { "==> $newOriginal $newTranslate" }

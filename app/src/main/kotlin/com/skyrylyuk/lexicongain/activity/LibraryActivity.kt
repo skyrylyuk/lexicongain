@@ -132,14 +132,14 @@ open class LibraryActivity : AppCompatActivity() {
                 .title(R.string.add_card_title)
                 .customView(R.layout.dialog_add_card, false)
                 .positiveText(R.string.add_card_agree)
-                .onPositive { dialog, which ->
+                .onPositive { dialog, _ ->
                     model?.originalText = dialog.view.newOriginalText.text.toString()
                     model?.translateText = dialog.view.newTranslateText.text.toString()
 
                     saveModel(key, model)
                 }
                 .negativeText(R.string.add_card_disagree)
-                .onNeutral { dialog, which ->  }
+                .onNeutral { _, _ ->  }
                 .show()
 
         dialog.view.newOriginalText.setText(model?.originalText)
